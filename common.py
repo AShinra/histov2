@@ -3,7 +3,7 @@ from pymongo import MongoClient
 
 def connect_to_mongodb():
     try:
-        client = MongoClient("mongodb://192.168.2.156:27017/", serverSelectionTimeoutMS=30000)
+        client = MongoClient("mongodb://192.168.2.156:27017/", serverSelectionTimeoutMS=40000)
     except Exception as e:
         st.write(e)
 
