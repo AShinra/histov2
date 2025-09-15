@@ -1,26 +1,10 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-import pandas as pd
-from datetime import datetime
-import time
 from PIL import Image
 import requests
 from io import BytesIO
-from common import connect_to_mongodb
 
-from archive import archive
-from input import input
-from summary import summary
-
-@st.cache_resource
-def get_logo():
-
-    url = "https://i.ibb.co/JRW19H4Y/AShinra-Logo.png"
-    response = requests.get(url)
-    response.raise_for_status()  # Raise an error for bad responses
-    image = Image.open(BytesIO(response.content))
-
-    return image
+from data_entry import data_entry
 
 @st.cache_resource
 def get_bgimage():
@@ -37,12 +21,21 @@ def get_bgimage():
 
     return
 
+@st.cache_resource
+def get_logo():
+
+    url = "https://i.ibb.co/JRW19H4Y/AShinra-Logo.png"
+    response = requests.get(url)
+    response.raise_for_status()  # Raise an error for bad responses
+    image = Image.open(BytesIO(response.content))
+
+    return image
+
+
 
 if __name__ == "__main__":
 
-    client = connect_to_mongodb()
-
-    # get_bgimage()
+    get_bgimage()
 
     hide_streamlit_style = """<style>
     ._profileContainer_gzau3_63{display: none;}
@@ -69,23 +62,23 @@ if __name__ == "__main__":
 
     with st.sidebar:
         selected = option_menu(
-            menu_title='Request History',
+            menu_title='Request History v2',
             menu_icon='clock-history',
             options=['Entry', 'Archive', 'Summary'],
             icons=['pencil-square', 'archive', 'journals']
         )
         btn_clearcache = st.button('Clear Cache', use_container_width=True)
 
-    
-    client_list = []
+    # client = get_gsheet_client()
+    # client_list = []
     if selected == 'Entry':
-        input(client, client_list)
+        data_entry()
     
-    if selected == 'Archive':
-        archive(client)
+    # if selected == 'Archive':
+    #     archive(client)
     
-    if selected == 'Summary':
-        summary(client)
+    # if selected == 'Summary':
+    #     summary(client)
     
     if btn_clearcache:
         st.cache_data.clear()
