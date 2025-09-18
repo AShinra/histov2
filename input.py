@@ -1,10 +1,12 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
+from streamlit_modal import Modal
 import pandas as pd
 from datetime import datetime
 import time
 from common import get_fqdn, is_valid_url
-import os
+
+
 
 
 @st.dialog('Delete Entry', width='large')
@@ -70,12 +72,10 @@ def input(client, client_list):
 
     # load temp
     temp_collection = db['temp']
+    id_list = list(temp_collection.distinct('_id'))
     
-    st.write("Streamlit version:", st.__version__)
-    st.write("Streamlit location:", os.path.dirname(st.__file__))
-
     with st.container(border=True):
-        col1, col2, col3 = st.columns([0.15, 0.7, 0.15], border=True)
+        col1, col2, col3 = st.columns([0.15, 0.6, 0.25], border=True)
         with col1:
             input_date = st.date_input(':calendar: Date', key='i_date', format='YYYY-MM-DD')
             input_date = datetime.combine(input_date, datetime.min.time())
@@ -107,11 +107,13 @@ def input(client, client_list):
             b_add = st.button('Add' , key='input_archive', use_container_width=True)
             
             if temp_collection.count_documents({}) > 0:
-                b_delete = st.button('Delete', use_container_width=True, disabled=False)
                 b_submit = st.button('Submit', use_container_width=True, disabled=False)
+                id_delete = st.selectbox('ID to Delete', options=id_list, disabled=False)
+                b_delete = st.button('Delete', use_container_width=True, disabled=False)
             else:
-                b_delete = st.button('Delete', use_container_width=True, disabled=True)
                 b_submit = st.button('Submit', use_container_width=True, disabled=True)                
+                id_delete = st.selectbox('ID to Delete', options=id_list, disabled=True)
+                b_delete = st.button('Delete', use_container_width=True, disabled=True)
 
         
 
@@ -166,8 +168,8 @@ def input(client, client_list):
 
         with st.expander(label='Click to see details', expanded=True):
             # display data in dataframe
-            docs = list(temp_collection.find({}, {'_id':0}))
-            # docs = list(temp_collection.find({}))
+            # docs = list(temp_collection.find({}, {'_id':0}))
+            docs = list(temp_collection.find({}))
             df = pd.DataFrame(docs)
             st.dataframe(df, hide_index=True)
 
@@ -188,19 +190,8 @@ def input(client, client_list):
     
     if b_delete:
         
-        id_list = temp_collection.distinct('_id')
-        
-        # with st.spinner('Processing Data', show_time=True):
-        #     with st.modal('Delete Record'):
-        #         st.write(id_list)
-                
-
-
-    #         sheet.worksheet('TEMP').batch_clear(["A2:H100"])
-    #         st.warning('Deleted all Entry!!!')
+        temp_collection.delete_one({'_id':id_delete})
+        st.success('Deleted Record')
+        st.rerun()
     
-    # if b_delete:
-    #     deleted_entry_df = delete_entry(sheet.worksheet('TEMP').get_all_values())
-    #     st.dataframe(deleted_entry_df)
-
     return

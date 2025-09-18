@@ -38,3 +38,15 @@ def is_valid_url(url: str) -> bool:
         return all([result.scheme, result.netloc])
     except ValueError:
         return False
+
+def clean_url(url: str):
+    try:
+        url = re.sub('https', 'http', url)
+    except:
+        pass
+
+    try:
+        url =re.sub('www.','', url)
+    except:
+        pass
+    
