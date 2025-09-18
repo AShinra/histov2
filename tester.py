@@ -2,7 +2,7 @@
 
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-f
+
 
 from urllib.parse import quote_plus
 
