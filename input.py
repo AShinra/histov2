@@ -62,8 +62,8 @@ def input(client, client_list):
         company = document['CLIENT NAME']
         companies_list.append(company)
     
-    agencies_list = set(agencies_list)
-    companies_list = set(companies_list)
+    agencies_list = sorted(set(agencies_list))
+    companies_list = sorted(set(companies_list))
 
     # load tier data
     fqdn_collection = db['tier']
