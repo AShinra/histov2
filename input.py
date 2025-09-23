@@ -62,7 +62,7 @@ def input(client, client_list):
         company = document['CLIENT NAME']
         companies_list.append(company)
     
-    agencies_list = set(agencies_list.sort())
+    agencies_list = set(agencies_list)
     st.write(agencies_list)
     exit()
     agencies_list = {item for item in agencies_list if item not in [None, '']}
