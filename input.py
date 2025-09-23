@@ -64,7 +64,8 @@ def input(client, client_list):
     
     agencies_list = set(agencies_list)
     agencies_list = list({item for item in agencies_list if item not in [None, '']})
-    st.write(agencies_list)
+    agencies_list = [str(item) for item in agencies_list]
+    st.write(agencies_list.sort())
     exit()
     companies_list = set(companies_list.sort())
 
