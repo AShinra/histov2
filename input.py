@@ -65,10 +65,11 @@ def input(client, client_list):
     agencies_list = set(agencies_list)
     agencies_list = list({item for item in agencies_list if item not in [None, '']})
     agencies_list = [str(item) for item in agencies_list]
-    # st.write(sorted(agencies_list))
-    # exit()
+    
     companies_list = set(companies_list)
-    st.write(companies_list)
+    for item in companies_list:
+        st.write(item)
+    exit()
 
     # load tier data
     fqdn_collection = db['tier']
