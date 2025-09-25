@@ -22,12 +22,13 @@ def settings(client):
 )
     st.title(":violet[Settings]")
 
-    col1, col2, col3 = st.co
+    col1, col2, col3 = st.columns(3)
 
-    selectd_agency = st.selectbox(
-        label='Agency',
-        options=get_agencies_list(client)
-    )
+    with col1:
+        selectd_agency = st.selectbox(
+            label='Agency',
+            options=get_agencies_list(client)
+        )
 
 
     return
