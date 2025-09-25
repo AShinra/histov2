@@ -67,7 +67,8 @@ def input(client, client_list):
     agencies_list = [str(item) for item in agencies_list]
     # st.write(sorted(agencies_list))
     # exit()
-    companies_list = set(companies_list.sort())
+    companies_list = set(companies_list)
+    st.write(companies_list)
 
     # load tier data
     fqdn_collection = db['tier']
