@@ -65,8 +65,8 @@ def input(client, client_list):
     agencies_list = set(agencies_list)
     agencies_list = list({item for item in agencies_list if item not in [None, '']})
     agencies_list = [str(item) for item in agencies_list]
-    st.write(sorted(agencies_list))
-    exit()
+    # st.write(sorted(agencies_list))
+    # exit()
     companies_list = set(companies_list.sort())
 
     # load tier data
