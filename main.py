@@ -15,8 +15,7 @@ from summary import summary
 @st.cache_resource
 def get_logo():
 
-    # url = r"https://i.ibb.co/JRW19H4Y/AShinra-Logo.png"
-    url = r"/images/Shinra-Logo.png"
+    url = "https://i.ibb.co/JRW19H4Y/AShinra-Logo.png"
     response = requests.get(url)
     response.raise_for_status()  # Raise an error for bad responses
     image = Image.open(BytesIO(response.content))
@@ -64,7 +63,7 @@ if __name__ == "__main__":
                 background-repeat: no-repeat;}</style>""", unsafe_allow_html=True)
     
     try:
-        st.sidebar.image(get_logo())
+        st.sidebar.image("assets/Shinra-Logo.png", caption="Shinra Logo")
     except FileNotFoundError:
         st.sidebar.write("Image file not found. Please check the path.")
 
