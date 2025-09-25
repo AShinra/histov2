@@ -3,7 +3,7 @@ from streamlit_option_menu import option_menu
 import pandas as pd
 from datetime import datetime
 import time
-from common import get_fqdn, is_valid_url
+from common import get_fqdn, is_valid_url, get_agencies_list
 
 
 
@@ -49,29 +49,10 @@ def input(client, client_list):
     st.title(":violet[Data Entry]")
 
     # get collections
-    db = client["histo"]
-    collection = db["data"]
-    documents = collection.find()
-    
-    agencies_list = []
-    companies_list = []
-    # get agencies and convert to list
-    for document in documents:
-        agency = document['AGENCY']
-        agencies_list.append(agency)
-        company = document['CLIENT NAME']
-        companies_list.append(company)
-    
-    agencies_list = set(agencies_list)
-    agencies_list = list({item for item in agencies_list if item not in [None, '']})
-    agencies_list = [str(item) for item in agencies_list]
-    
-    companies_list = set(companies_list)
-    for item in companies_list:
-        st.write(item)
-    exit()
+    agencies_list = get_agencies_list(client)
 
     # load tier data
+    db = client['histo']
     fqdn_collection = db['tier']
     fqdn_documents = fqdn_collection.find()
 
@@ -89,8 +70,12 @@ def input(client, client_list):
                 options=['Yes', 'No'],
                 accept_new_options=False
             )
-            checkbox_adhoc = st.checkbox('Ad Hoc')
 
+            radio_reqtype = st.radio(
+                label='Request Type',
+                options=['Regular', 'Ad Hoc', 'TOA'],
+            )
+           
         with col2:
             col2a, col2b = st.columns(2)
             with col2a:
@@ -99,15 +84,20 @@ def input(client, client_list):
                     options=agencies_list,
                     key='in_agency',
                     accept_new_options=True
-                    )                
+                    )
+            collection = db['agencies']
+            document = collection.find_one({'AGENCY NAME':input_agency})
+            companies_list = document['CLIENTS']
+            
             with col2b:
                     input_client = st.selectbox(
                     label='Client',
                     options=companies_list,
                     key='in_client',
                     accept_new_options=True)
-
+            
             input_hyperlink = st.text_area('Hyperlink', key='in_hyperlink')
+        
         with col3:
             b_add = st.button('Add' , key='input_archive', use_container_width=True)
             
@@ -127,14 +117,16 @@ def input(client, client_list):
         with st.spinner('Processing Data', show_time=True):
                 
             if input_captured == 'Yes':
-                captured = 'Y'
+                captured = 1
             elif input_captured == 'No':
-                captured = 'N'
-            
-            if checkbox_adhoc:
-                ad_hoc = 'AD HOC'
-            else:
-                ad_hoc = ''
+                captured = 0
+
+            if radio_reqtype=='Regular':
+                reqtype = 1
+            elif radio_reqtype=='Ad Hoc':
+                reqtype = 2
+            elif radio_reqtype=='TOA':
+                reqtype = 3
 
             _hyperlinks = input_hyperlink.splitlines()
             data = []
@@ -164,7 +156,7 @@ def input(client, client_list):
                     'CAPTURED':captured,
                     'FQDN':input_fqdn,
                     'AGENCY':(str(input_agency)).upper(),
-                    'TYPE':ad_hoc
+                    'TYPE':reqtype
                 }
 
                 # check if link exists

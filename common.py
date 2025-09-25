@@ -50,3 +50,11 @@ def clean_url(url: str):
     except:
         pass
     
+
+def get_agencies_list(client):
+
+    db = client["histo"]
+    collection = db["agencies"]
+    cursor = collection.find({}, {'AGENCY NAME':1, '_id':0})
+    
+    return [doc['AGENCY NAME'] for doc in cursor if 'AGENCY NAME' in doc]

@@ -11,6 +11,7 @@ from common import connect_to_mongodb
 from archive import archive
 from input import input
 from summary import summary
+from settings import settings
 
 @st.cache_resource
 def get_logo():
@@ -71,8 +72,8 @@ if __name__ == "__main__":
         selected = option_menu(
             menu_title='Request History',
             menu_icon='clock-history',
-            options=['Entry', 'Archive', 'Summary'],
-            icons=['pencil-square', 'archive', 'journals']
+            options=['Entry', 'Archive', 'Summary', 'Settings'],
+            icons=['pencil-square', 'archive', 'journals', 'gear']
         )
         btn_clearcache = st.button('Clear Cache', use_container_width=True)
 
@@ -87,5 +88,11 @@ if __name__ == "__main__":
     if selected == 'Summary':
         summary(client)
     
+    if selected == 'Settings':
+        settings(client)
+
     if btn_clearcache:
         st.cache_data.clear()
+    
+    
+
