@@ -63,7 +63,7 @@ if __name__ == "__main__":
                 background-repeat: no-repeat;}</style>""", unsafe_allow_html=True)
     
     try:
-        st.sidebar.image("assets/Shinra-Logo.png", caption="Shinra Logo")
+        st.sidebar.image(get_logo())
     except FileNotFoundError:
         st.sidebar.write("Image file not found. Please check the path.")
 
