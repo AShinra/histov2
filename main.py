@@ -16,7 +16,7 @@ from summary import summary
 def get_logo():
 
     # url = r"https://i.ibb.co/JRW19H4Y/AShinra-Logo.png"
-    url = r"images/Shinra-Logo.png"
+    url = r"/images/Shinra-Logo.png"
     response = requests.get(url)
     response.raise_for_status()  # Raise an error for bad responses
     image = Image.open(BytesIO(response.content))
