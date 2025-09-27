@@ -54,10 +54,15 @@ def archive(client):
     
     client_collection = db['agencies']
     cursor = client_collection.find({}, {'CLIENTS':1, '_id':0})
+
+    client_list = []
     for items in cursor:
         for item in items['CLIENTS']:
-            st.write(item)
+            client_list.append(item)
     
+    client_list = sorted(list(dict.fromkeys(client_list)))
+    st.write(client_list)
+
     exit()
 
     client_list = df['CLIENT NAME'].unique()
