@@ -39,7 +39,8 @@ def get_bgimage():
     return
 
 
-if __name__ == "__main__":
+def main(username, rights):
+# if __name__ == "__main__":
 
     client = connect_to_mongodb()
 
@@ -69,14 +70,22 @@ if __name__ == "__main__":
         st.sidebar.write("Image file not found. Please check the path.")
 
     with st.sidebar:
+
+        if rights=='admin':
+            options_list=['Entry', 'Archive', 'Summary', 'Settings']
+            icons_list=['pencil-square', 'archive', 'journals', 'gear']
+        else:
+            options_list=['Archive', 'Summary']
+            icons_list=['archive', 'journals']
+
+        st.sidebar.header(f':red[Welcome :blue[*{username.title()}*]] 👤')
         selected = option_menu(
             menu_title='Request History',
             menu_icon='clock-history',
-            options=['Entry', 'Archive', 'Summary', 'Settings'],
-            icons=['pencil-square', 'archive', 'journals', 'gear']
+            options=options_list,
+            icons=icons_list
         )
         btn_clearcache = st.button('Clear Cache', use_container_width=True)
-
     
     client_list = []
     if selected == 'Entry':

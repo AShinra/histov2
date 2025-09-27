@@ -58,6 +58,7 @@ def input(client, client_list):
 
     # load temp
     temp_collection = db['temp']
+    temp_collection_count = temp_collection.count_documents({})    
     id_list = list(temp_collection.distinct('_id'))
     
     with st.container(border=True):
@@ -65,15 +66,17 @@ def input(client, client_list):
         with col1:
             input_date = st.date_input(':calendar: Date', key='i_date', format='YYYY-MM-DD')
             input_date = datetime.combine(input_date, datetime.min.time())
-            input_captured = st.selectbox(
+            
+            input_captured = st.pills(
                 label='Captured',
                 options=['Yes', 'No'],
-                accept_new_options=False
+                default='Yes'
             )
 
-            radio_reqtype = st.radio(
+            radio_reqtype = st.pills(
                 label='Request Type',
                 options=['Regular', 'Ad Hoc', 'TOA'],
+                default='Regular'
             )
            
         with col2:
@@ -85,8 +88,8 @@ def input(client, client_list):
                     key='in_agency',
                     accept_new_options=True
                     )
-            collection = db['agencies']
-            document = collection.find_one({'AGENCY NAME':input_agency})
+            agency_collection = db['agencies']
+            document = agency_collection.find_one({'AGENCY NAME':input_agency})
             companies_list = document['CLIENTS']
             
             with col2b:
@@ -99,22 +102,53 @@ def input(client, client_list):
             input_hyperlink = st.text_area('Hyperlink', key='in_hyperlink')
         
         with col3:
-            b_add = st.button('Add' , key='input_archive', use_container_width=True)
-            
-            if temp_collection.count_documents({}) > 0:
-                b_submit = st.button('Submit', use_container_width=True, disabled=False)
-                id_delete = st.selectbox('ID to Delete', options=id_list, disabled=False)
-                b_delete = st.button('Delete', use_container_width=True, disabled=False)
+            btn_add = st.button('Add' , key='input_archive', use_container_width=True)                        
+        
+    with st.expander(label='Click to see details', expanded=True):
+        
+        cole1, cole2 = st.columns([0.75, 0.25])
+        with cole1:
+            # display data in dataframe
+            docs = list(temp_collection.find({}, {'_id':0}))            
+            df = pd.DataFrame(docs)
+            if df.empty:
+                st.write('No Data to display')
             else:
-                b_submit = st.button('Submit', use_container_width=True, disabled=True)                
-                id_delete = st.selectbox('ID to Delete', options=id_list, disabled=True)
-                b_delete = st.button('Delete', use_container_width=True, disabled=True)
-
+                df.index = df.index+1
+                st.dataframe(df)
+        with cole2:
+            with st.container(border=True):
+                if df.empty:
+                    btn_submit = st.button(
+                        label='Submit',
+                        use_container_width=True,
+                        disabled=True
+                    )
+                else:
+                    btn_submit = st.button(
+                        label='Submit',
+                        use_container_width=True,
+                        disabled=False
+                    )
+                record_no = st.selectbox(
+                label='Record',
+                options = list(range(1, temp_collection_count+1))
+                )
+                btn_delete = st.button(
+                    label='Delete',
+                    use_container_width=True
+                )
+                btn_delete_all = st.button(
+                    label='Delete All',
+                    use_container_width=True
+                )
+                
+                
         
 
-    if b_add:
+    if btn_add:
         
-        with st.spinner('Processing Data', show_time=True):
+        with st.spinner('Adding Data', show_time=True):
                 
             if input_captured == 'Yes':
                 captured = 1
@@ -143,7 +177,7 @@ def input(client, client_list):
                         input_tier = result['tier']
                     else:
                         input_fqdn = fqdn
-                        input_tier = 'Unlisted'
+                        input_tier = 0
                 else:
                     st.error(f'Invalid URL - {_hyperlink}')
                     continue
@@ -162,33 +196,41 @@ def input(client, client_list):
                 # check if link exists
                 if not temp_collection.find_one({'LINK':_hyperlink}):
                     result = temp_collection.insert_one(data)
-
-        with st.expander(label='Click to see details', expanded=True):
-            # display data in dataframe
-            # docs = list(temp_collection.find({}, {'_id':0}))
-            docs = list(temp_collection.find({}))
-            df = pd.DataFrame(docs)
-            st.dataframe(df, hide_index=True)
-
+                else:
+                    st.toast('Record already exists!!!')
+        
+            time.sleep(2)
+        st.rerun()
                     
-    if b_submit:
+    if btn_submit:        
 
-        with st.spinner('Processing Data', show_time=True):
+        with st.spinner('Sending Record', show_time=True):
+
+            data_collection  = db['data']
             
             # count the documents stored in temp collection
             temp_count = temp_collection.count_documents({})
 
             # insert all the documents in temp collection to database collection
-            collection.insert_many(temp_collection.find())
-            st.success(f'Added {temp_count} entries')
+            data_collection.insert_many(temp_collection.find())
+            st.toast(f'Added {temp_count} entries')
 
             # delete all documents from temp collection
             temp_collection.delete_many({})
-    
-    if b_delete:
         
-        temp_collection.delete_one({'_id':id_delete})
-        st.success('Deleted Record')
         st.rerun()
     
-    return
+    if btn_delete:
+        with st.spinner('Deleting Record', show_time=True):
+            data_to_delete = df.at[record_no,'LINK']
+            temp_collection.delete_one({'LINK':data_to_delete})
+            time.sleep(2)
+        
+        st.rerun()
+    
+    if btn_delete_all:
+        with st.spinner('Deleting All Records', show_time=True):
+            temp_collection.delete_many({})
+            time.sleep(2)
+
+        st.rerun()    

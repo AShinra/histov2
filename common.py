@@ -58,3 +58,12 @@ def get_agencies_list(client):
     cursor = collection.find({}, {'AGENCY NAME':1, '_id':0})
     
     return [doc['AGENCY NAME'] for doc in cursor if 'AGENCY NAME' in doc]
+
+def has_upper_and_number(text: str) -> bool:
+    has_upper = any(c.isupper() for c in text)
+    has_digit = any(c.isdigit() for c in text)
+    if len(text)>=8:
+        text_length = True
+    else:
+        text_length = False
+    return has_upper, has_digit, text_length
