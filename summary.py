@@ -85,7 +85,8 @@ def summary(client):
         # client selection
         db = client['histo']
         agency_collection = db['agencies']
-        client_list = agency_collection.find_one({'AGENCY NAME':agency_selection})
+        document = agency_collection.find_one({'AGENCY NAME':agency_selection})
+        client_list = document['CLIENTS']
         st.write(client_list)
         exit()
 
