@@ -89,12 +89,13 @@ def summary(client):
             df_agency_filtered = df
             cursor = agency_collection.find({}, {'CLIENTS':1, '_id':0})
 
-            client_list = []
+            client_list_options = []
             for items in cursor:
                 for item in items['CLIENTS']:
-                    client_list.append(item)
+                    client_list_options.append(item)
             
-            client_list = sorted(list(dict.fromkeys(client_list)))
+            client_list_options = sorted(list(dict.fromkeys(client_list_options)))
+            client_list_options.insert(0, 'ALL')
 
         client_selection = st.selectbox(
             label='CLIENT',
