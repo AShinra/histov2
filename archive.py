@@ -44,7 +44,15 @@ def archive(client):
     
     st.title(":violet[Archive Data]")
 
-    df = get_data(client)
+    db = client['histo']
+    collection = db['data']
+    documents = list(collection.find({}))
+
+    df = pd.DataFrame(documents)
+
+    st.dataframe(df)
+
+    exit()
 
     client_list = df['CLIENT NAME'].unique()
     client_list = sorted(client_list)    
