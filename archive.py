@@ -64,16 +64,10 @@ def archive(client):
         col1, col2, col3 = st.columns([0.15, 0.20, 0.65], border=True)
         
         with col1:
-            # radio_options = st.radio(
-            #     label=':blue[**OPTIONS**]',
-            #     options=['Off', 'All Dates', 'All Clients'],
-            #     horizontal=False)
-            radio_options = st.pills(
+            radio_options = st.radio(
                 label=':blue[**OPTIONS**]',
                 options=['Off', 'All Dates', 'All Clients'],
-                default='Off',
-                width='stretch'
-            )
+                horizontal=False)            
                         
             with st.popover(label=':orange[**Help**]'):
                 st.write('Off - Generates data for chosen client/s and choses dates')
