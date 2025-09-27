@@ -53,7 +53,7 @@ def archive(client):
     st.dataframe(df)
     
     client_collection = db['agencies']
-    cursor = client_collection.find({'CLIENTS'})
+    cursor = client_collection.find({}, {'CLIENTS':1, '_id':0})
     for item in cursor:
         st.write(item)
     
