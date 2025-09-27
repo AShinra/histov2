@@ -77,18 +77,24 @@ def summary(client):
             options=agency_list
         )
 
+        agency_collection = db['agencies']
         if agency_selection != 'ALL':
             df_agency_filtered = df[df['AGENCY']==agency_selection]
+            # client selection
+            document = agency_collection.find_one({'AGENCY NAME':agency_selection})
+            client_list_options = document['CLIENTS']
+            client_list_options = sorted(client_list_options)
+            client_list_options.insert(0, 'ALL')
         else:
             df_agency_filtered = df
+            cursor = agency_collection.find({}, {'CLIENTS':1, '_id':0})
 
-        # client selection
-        db = client['histo']
-        agency_collection = db['agencies']
-        document = agency_collection.find_one({'AGENCY NAME':agency_selection})
-        client_list_options = document['CLIENTS']
-        client_list_options = sorted(client_list_options)
-        client_list_options.insert(0, 'ALL')
+            client_list = []
+            for items in cursor:
+                for item in items['CLIENTS']:
+                    client_list.append(item)
+            
+            client_list = sorted(list(dict.fromkeys(client_list)))
 
         client_selection = st.selectbox(
             label='CLIENT',
