@@ -4,28 +4,6 @@ import pandas as pd
 from datetime import datetime, date
 import time
 
-
-@st.cache_data
-def get_data(_client):
-    
-    try:
-        # client = get_gsheet_client()
-        sheet_id = "1VVLZ0O3NncvMjex8gonkgPTfIKzkJh22UON55991_QE"
-        sheet = _client.open_by_key(sheet_id)
-
-        data = sheet.sheet1.get_all_values()
-
-        df = pd.DataFrame(data)
-        df.columns = df.iloc[0]
-        df = df[1:]
-
-
-    except Exception as e:
-        st.error(f"Error accessing Google Sheet: {e}")
-
-    return df
-
-
 def archive(client):
 
     st.markdown(

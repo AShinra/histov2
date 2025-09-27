@@ -43,7 +43,13 @@ def summary(client):
 
     st.title(':violet[Summary]')
 
-    df = get_data(client)
+    db = client['histo']
+    collection = db['data']
+    documents = list(collection.find({}))
+
+    df = pd.DataFrame(documents)
+
+    # df = get_data(client)
 
     df['DATE'] = pd.to_datetime(df['DATE'])
     df['MONTH_NAME'] = df['DATE'].dt.month_name()
