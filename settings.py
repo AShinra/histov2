@@ -168,9 +168,6 @@ def settings(client):
         
         with col2a:
             with st.container(border=True):
-                
-                st.write(st.session_state.setting)
-        
                 username = st.text_input(
                     label='Username',
                     key='entry_username'
@@ -223,5 +220,4 @@ def settings(client):
                 st.error('Should contain a number')
             elif text_length==False:
                 st.error('Should have a minimum of 8 characters')
-            st.session_state.setting = True
             st.rerun()
