@@ -155,7 +155,7 @@ def archive(client):
                         col_cap, col_mis = st.columns(2, border=True)
 
                         with col_cap:
-                            captured_df = df[(df['DATE'] >= st_date) & (df['DATE'] <= en_date) & (df['CAPTURED'] == 'Y')]
+                            captured_df = df[(df['DATE'] >= st_date) & (df['DATE'] <= en_date) & (df['CAPTURED'] == 1)]
                             cl_captured = captured_df[captured_df['CLIENT NAME']==cl]
                             sel_cl_captured = cl_captured[['DATE', 'TIER', 'LINK']]
 
@@ -164,7 +164,7 @@ def archive(client):
                             st.dataframe(sel_cl_captured, use_container_width=True, hide_index=True)
                         
                         with col_mis:
-                            missed_df = df[(df['DATE'] >= st_date) & (df['DATE'] <= en_date) & (df['CAPTURED'] == 'N')]
+                            missed_df = df[(df['DATE'] >= st_date) & (df['DATE'] <= en_date) & (df['CAPTURED'] == 0)]
                             cl_missed = missed_df[missed_df['CLIENT NAME']==cl]
                             sel_cl_missed = cl_missed[['DATE', 'TIER', 'LINK']]
 
