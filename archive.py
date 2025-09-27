@@ -61,13 +61,7 @@ def archive(client):
             client_list.append(item)
     
     client_list = sorted(list(dict.fromkeys(client_list)))
-    st.write(client_list)
-
-    exit()
-
-    client_list = df['CLIENT NAME'].unique()
-    client_list = sorted(client_list)    
-
+    
     with st.container(border=True):
         col1, col2, col3 = st.columns([0.15, 0.20, 0.65], border=True)
         
