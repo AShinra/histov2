@@ -70,12 +70,6 @@ def summary(client):
 
         # agency selection
         agency_list = get_agencies_list(client)
-        st.write(agency_list)
-        exit()
-
-
-        agency_list = df['AGENCY'].unique()
-        agency_list = sorted(agency_list)
         agency_list.insert(0, 'ALL')
 
         agency_selection = st.selectbox(
