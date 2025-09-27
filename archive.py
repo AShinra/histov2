@@ -71,7 +71,8 @@ def archive(client):
             radio_options = st.pills(
                 label=':blue[**OPTIONS**]',
                 options=['Off', 'All Dates', 'All Clients'],
-                default='Off'
+                default='Off',
+                width='stretch'
             )
                         
             with st.popover(label=':orange[**Help**]'):
