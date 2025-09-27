@@ -63,11 +63,20 @@ def summary(client):
         
         cb_adhoc = st.checkbox('AD HOC')
         if cb_adhoc:
-            df = df[df['TYPE']=='AD HOC']
+            df = df[df['TYPE']==2]
         else:
-            df = df[df['TYPE']!='AD HOC']
+            df = df[df['TYPE']!=2]
 
         # agency selection
+        agency_collection = db['agencies']
+        cursor = agency_collection.find({}, {'AGENCY NAME':1, '_id':0})
+
+        for items in cursor:
+            st.write(items)
+
+        exit()
+
+
         agency_list = df['AGENCY'].unique()
         agency_list = sorted(agency_list)
         agency_list.insert(0, 'ALL')
