@@ -216,9 +216,9 @@ def summary(client):
                             st.write(_pub)
 
         if cap_option=='Captured':
-            df_captured = df_clientfiltered[df_clientfiltered['CAPTURED'] == 'Y']
+            df_captured = df_clientfiltered[df_clientfiltered['CAPTURED'] == 1]
         elif cap_option=='Missed':
-            df_captured = df_clientfiltered[df_clientfiltered['CAPTURED'] == 'N']
+            df_captured = df_clientfiltered[df_clientfiltered['CAPTURED'] == 0]
         elif cap_option=='Request':
             df_captured = df_clientfiltered
 
