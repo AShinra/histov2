@@ -69,7 +69,7 @@ def summary(client):
 
         # agency selection
         agency_collection = db['agencies']
-        cursor = agency_collection.find({}, {'AGENCY NAME':1, '_id':0})
+        cursor = agency_collection.find_any({}, {'AGENCY NAME':1, '_id':0})
 
         for items in cursor:
             st.write(items)
