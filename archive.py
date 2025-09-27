@@ -49,8 +49,6 @@ def archive(client):
     documents = list(collection.find({}))
 
     df = pd.DataFrame(documents)
-
-    st.dataframe(df)
     
     client_collection = db['agencies']
     cursor = client_collection.find({}, {'CLIENTS':1, '_id':0})
