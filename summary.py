@@ -83,6 +83,12 @@ def summary(client):
             df_agency_filtered = df
 
         # client selection
+        db = client['histo']
+        agency_collection = db['agencies']
+        client_list = agency_collection.find_one({'AGENCY NAME':agency_selection})
+        st.write(client_list)
+        exit()
+
         client_list_options=df_agency_filtered['CLIENT NAME'].unique()
         client_list_options = sorted(client_list_options)
         client_list_options.insert(0, 'ALL')
