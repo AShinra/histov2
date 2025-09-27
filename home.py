@@ -6,6 +6,24 @@ from main import main, get_logo
 
 if __name__ == '__main__':
 
+    hide_streamlit_style = """<style>
+    ._profileContainer_gzau3_63{display: none;}
+    </style>"""
+    st.markdown(hide_streamlit_style, unsafe_allow_html=True)    
+
+
+    st.set_page_config(
+        layout="wide",
+        page_title='HISTO')
+    
+    # hide streamlit toolbar
+    st.markdown("""<style>[data-testid="stToolbar"] {display: none;}</style>""", unsafe_allow_html=True)
+    st.markdown("""<style>[data-testid="manage-app-button"] {display: none !important;}</style>""", unsafe_allow_html=True)
+    st.markdown("""<style>.stApp {background-image: url("https://i.ibb.co/8D4hLbSX/natural-light-white-background.jpg");
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;}</style>""", unsafe_allow_html=True)
+
     try:
         st.sidebar.image(get_logo())
     except FileNotFoundError:
