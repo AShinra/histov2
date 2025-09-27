@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime
 import time
 import altair as alt
+from common import get_agencies_list
 
 
 @st.cache_data
@@ -68,12 +69,8 @@ def summary(client):
             df = df[df['TYPE']!=2]
 
         # agency selection
-        agency_collection = db['agencies']
-        cursor = agency_collection.find_any({}, {'AGENCY NAME':1, '_id':0})
-
-        for items in cursor:
-            st.write(items)
-
+        agency_list = get_agencies_list(client)
+        st.write(agency_list)
         exit()
 
 
