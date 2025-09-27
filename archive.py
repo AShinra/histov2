@@ -54,8 +54,9 @@ def archive(client):
     
     client_collection = db['agencies']
     cursor = client_collection.find({}, {'CLIENTS':1, '_id':0})
-    for item in cursor:
-        st.write(item['CLIENTS'])
+    for items in cursor:
+        for item in items['CLIENTS']:
+            st.write(item)
     
     exit()
 
