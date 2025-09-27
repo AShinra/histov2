@@ -64,10 +64,10 @@ def main(username, rights):
                 background-position: center;
                 background-repeat: no-repeat;}</style>""", unsafe_allow_html=True)
     
-    try:
-        st.sidebar.image(get_logo())
-    except FileNotFoundError:
-        st.sidebar.write("Image file not found. Please check the path.")
+    # try:
+    #     st.sidebar.image(get_logo())
+    # except FileNotFoundError:
+    #     st.sidebar.write("Image file not found. Please check the path.")
 
     with st.sidebar:
 
