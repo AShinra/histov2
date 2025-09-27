@@ -51,7 +51,12 @@ def archive(client):
     df = pd.DataFrame(documents)
 
     st.dataframe(df)
-
+    
+    client_collection = db['agencies']
+    cursor = client_collection.find({'CLIENTS'})
+    for item in cursor:
+        st.write(item)
+    
     exit()
 
     client_list = df['CLIENT NAME'].unique()
