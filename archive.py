@@ -128,14 +128,14 @@ def archive(client):
 
                             with col_off1:
 
-                                off_captured = df[(df['DATE'] >= st_date) & (df['DATE'] <= en_date) & (df['CLIENT NAME'] == cl) & (df['CAPTURED'] == 'Y')]
+                                off_captured = df[(df['DATE'] >= st_date) & (df['DATE'] <= en_date) & (df['CLIENT NAME'] == cl) & (df['CAPTURED'] == 1)]
                                 sel_off_captured = off_captured[['DATE', 'TIER', 'LINK']]
 
                                 st.subheader(f':green[Captured - {sel_off_captured.shape[0]}]')
                                 st.dataframe(sel_off_captured, hide_index=True, use_container_width=True)
                             
                             with col_off2:
-                                off_missed = df[(df['DATE'] >= st_date) & (df['DATE'] <= en_date) & (df['CLIENT NAME'] == cl) & (df['CAPTURED'] == 'N')]
+                                off_missed = df[(df['DATE'] >= st_date) & (df['DATE'] <= en_date) & (df['CLIENT NAME'] == cl) & (df['CAPTURED'] == 0)]
                                 sel_off_missed = off_missed[['DATE', 'TIER', 'LINK']]
 
                                 st.subheader(f':red[Missed - {sel_off_missed.shape[0]}]')
