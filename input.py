@@ -66,7 +66,8 @@ def input(client, client_list):
                 radio_reqtype = st.pills(
                     label='Request Type',
                     options=['Regular', 'Ad Hoc', 'TOA'],
-                    default='Regular'
+                    default='Regular',
+                    width='stretch'
                 )
            
         with col2:
