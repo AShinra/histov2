@@ -4,7 +4,7 @@ from common import get_agencies_list, page_title
 
 def settings(client):
     
-    page_title('Settings')
+    page_title('Agency Management')
 
     db = client['histo']
     collection = db['agencies']
