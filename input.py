@@ -61,7 +61,7 @@ def input(client, client_list):
                 width='stretch'
             )
 
-            cola, colb = st.columns
+            cola, colb = st.columns(2)
             with cola:
                 radio_reqtype = st.pills(
                     label='Request Type',
