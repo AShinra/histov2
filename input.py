@@ -57,7 +57,8 @@ def input(client, client_list):
             input_captured = st.pills(
                 label='Captured',
                 options=['Yes', 'No'],
-                default='Yes'
+                default='Yes',
+                width='stretch'
             )
 
             radio_reqtype = st.pills(
