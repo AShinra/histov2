@@ -56,7 +56,8 @@ def summary(client):
 
         req_type = st.pills(
             label='Request Type',
-            options=['Regular', 'Ad Hoc', 'TOA']
+            options=['Regular', 'Ad Hoc', 'TOA'],
+            width='stretch'
         )
 
         if req_type == 'Regular':
