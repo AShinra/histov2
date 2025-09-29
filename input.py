@@ -64,7 +64,7 @@ def input(client, client_list):
             cola, colb = st.columns(2)
             with cola:
                 radio_reqtype = st.pills(
-                    label='Request Type',
+                    label='**:violet[Request]**',
                     options=['Regular', 'Ad Hoc', 'TOA'],
                     default='Regular',
                     width='stretch'
