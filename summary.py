@@ -48,11 +48,23 @@ def summary(client):
     selection_col, chart_col = st.columns([0.3, 0.7], border=True)
     with selection_col:
         
-        cb_adhoc = st.checkbox('AD HOC')
-        if cb_adhoc:
+        # cb_adhoc = st.checkbox('AD HOC')
+        # if cb_adhoc:
+        #     df = df[df['TYPE']==2]
+        # else:
+        #     df = df[df['TYPE']!=2]
+
+        req_type = st.pills(
+            label='Request Type',
+            options=['Regular', 'Ad Hoc', 'TOA']
+        )
+
+        if req_type == 'Regular':
+            df = df[df['TYPE']==1]
+        elif req_type == 'Ad Hoc':
             df = df[df['TYPE']==2]
-        else:
-            df = df[df['TYPE']!=2]
+        elif req_type == 'TOA':
+            df = df[df['TYPE']==3]
 
         # agency selection
         agency_list = get_agencies_list(client)
