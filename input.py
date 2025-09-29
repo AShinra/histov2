@@ -51,7 +51,7 @@ def input(client, client_list):
     with st.container(border=True):
         col1, col2, col3 = st.columns([0.15, 0.6, 0.25], border=True)
         with col1:
-            input_date = st.date_input(':calendar: Date', key='i_date', format='YYYY-MM-DD')
+            input_date = st.date_input(':calendar: **:violet[Date]**', key='i_date', format='YYYY-MM-DD')
             input_date = datetime.combine(input_date, datetime.min.time())
             
             input_captured = st.pills(
