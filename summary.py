@@ -47,13 +47,13 @@ def summary(client):
     
     selection_col, chart_col = st.columns([0.3, 0.7], border=True)
     with selection_col:
-        
-        req_type = st.pills(
-            label='Request Type',
-            options=['Regular', 'Ad Hoc', 'TOA'],
-            width='stretch',
-            default='Regular'
-        )
+        with st.container(border=True):
+            req_type = st.pills(
+                label='**:violet[REQUEST TYPE]**',
+                options=['Regular', 'Ad Hoc', 'TOA'],
+                width='stretch',
+                default='Regular'
+            )
 
         if req_type == 'Regular':
             df = df[df['TYPE']==1]
@@ -63,44 +63,36 @@ def summary(client):
             df = df[df['TYPE']==3]
 
         # agency selection
-        agency_list = sorted((df['AGENCY'].unique()).tolist())
-        
-        
-        # agency_list = get_agencies_list(client)
-        # agency_list.insert(0, 'ALL')
+        agency_list = sorted((df['AGENCY'].unique()).tolist()) # from dataframe result
+        # agency_list = get_agencies_list(client) # from mongdb
+        agency_list.insert(0, 'ALL')
 
-        agency_selection = st.selectbox(
-            label='AGENCY',
-            options=agency_list
-        )
-
-        exit()
-
-        agency_collection = db['agencies']
-        if agency_selection != 'ALL':
-            df_agency_filtered = df[df['AGENCY']==agency_selection]
-            # client selection
-            document = agency_collection.find_one({'AGENCY NAME':agency_selection})
-            client_list_options = document['CLIENTS']
-            client_list_options = sorted(client_list_options)
-            client_list_options.insert(0, 'ALL')
-        else:
-            df_agency_filtered = df
-            cursor = agency_collection.find({}, {'CLIENTS':1, '_id':0})
-
-            client_list_options = []
-            for items in cursor:
-                for item in items['CLIENTS']:
-                    client_list_options.append(item)
+        with st.container(border=True):
+            agency_selection = st.selectbox(
+                label='**:violet[AGENCY]**',
+                options=agency_list
+            )       
             
-            client_list_options = sorted(list(dict.fromkeys(client_list_options)))
-            client_list_options.insert(0, 'ALL')
+            if agency_selection != 'ALL':
+                df_agency_filtered = df[df['AGENCY']==agency_selection] # filter dataframe
+                client_list_options = df_agency_filtered['CLIENT NAME'] # get clients from filtered df
+                client_list_options = client_list_options.unique() # get the unique values only
+                client_list_options = client_list_options.tolist() # convert to list
+                client_list_options = sorted(client_list_options) # sort list
+                client_list_options.insert(0, 'ALL')
+            else:
+                df_agency_filtered = df
+                client_list_options = df_agency_filtered['CLIENT NAME'] # get clients from filtered df
+                client_list_options = client_list_options.unique() # get the unique values only
+                client_list_options = client_list_options.tolist() # convert to list
+                client_list_options = sorted(client_list_options) # sort list
+                client_list_options.insert(0, 'ALL')
 
-        client_selection = st.selectbox(
-            label='CLIENT',
-            options=client_list_options
-        )
-
+            client_selection = st.selectbox(
+                label='**:violet[CLIENT]**',
+                options=client_list_options
+            )
+        
         if client_selection != 'ALL':
             df_clientfiltered = df_agency_filtered[df_agency_filtered['CLIENT NAME']==client_selection]
         else:
@@ -142,19 +134,27 @@ def summary(client):
         misses_percent = total_misses/total_request
 
 
-        cola1, cola2 = st.columns(2)
+        cola1, cola2 = st.columns([0.4, 0.6])
 
         with cola1:
-            cap_option = st.radio(
-                label='OPTIONS',
-                options=['Missed', 'Captured', 'Request'],
-                horizontal=False                
-            )
+            with st.container(border=True):
+                # cap_option = st.radio(
+                #     label='OPTIONS',
+                #     options=['Missed', 'Captured', 'Request'],
+                #     horizontal=False                
+                # )
+                cap_option = st.pills(
+                    label='**:violet[OPTIONS]**',
+                    options=['Missed', 'Captured', 'Request'],
+                    width='stretch',
+                    default='Missed'
+                )
         
         with cola2:
-            year_selected = st.selectbox(
-                label='YEAR',
-                options=year_list)
+            with st.container(border=True):
+                year_selected = st.selectbox(
+                    label='**:violet[YEAR]**',
+                    options=year_list)
         
         # compute statistics
         with st.spinner('Processing Data', show_time=True):
