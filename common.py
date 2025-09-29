@@ -67,3 +67,19 @@ def has_upper_and_number(text: str) -> bool:
     else:
         text_length = False
     return has_upper, has_digit, text_length
+
+def page_title(title):
+    st.markdown(
+    """
+    <style>
+    .block-container {
+        padding-top: 1rem; /* Adjust this value as needed (e.g., 0rem for minimal padding) */
+        padding-bottom: 0rem;
+        padding-left: 5rem;
+        padding-right: 5rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+    st.title(f":violet[{title}]")

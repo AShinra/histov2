@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime
 import time
 import altair as alt
-from common import get_agencies_list
+from common import get_agencies_list, page_title
 
 
 @st.cache_data
@@ -28,21 +28,7 @@ def get_data(_client):
 
 
 def summary(client):
-    st.markdown(
-    """
-    <style>
-    .block-container {
-        padding-top: 1rem; /* Adjust this value as needed (e.g., 0rem for minimal padding) */
-        padding-bottom: 0rem;
-        padding-left: 5rem;
-        padding-right: 5rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-    st.title(':violet[Summary]')
+    page_title('Summary')
 
     db = client['histo']
     collection = db['data']

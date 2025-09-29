@@ -3,25 +3,12 @@ from streamlit_option_menu import option_menu
 import pandas as pd
 from datetime import datetime, date
 import time
+from common import page_title
 
 def archive(client):
 
-    st.markdown(
-    """
-    <style>
-    .block-container {
-        padding-top: 1rem; /* Adjust this value as needed (e.g., 0rem for minimal padding) */
-        padding-bottom: 0rem;
-        padding-left: 5rem;
-        padding-right: 5rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+    page_title('Archive')
     
-    st.title(":violet[Archive Data]")
-
     db = client['histo']
     collection = db['data']
     documents = list(collection.find({}))
