@@ -54,7 +54,7 @@ def input(client, client_list):
             input_date = st.date_input(':calendar: **:violet[DATE]**', key='i_date', format='YYYY-MM-DD')
             input_date = datetime.combine(input_date, datetime.min.time())
 
-            cola, colb = st.columns(2)
+            cola, colb = st.columns(2, border=True)
             with cola:
                 input_captured = st.pills(
                     label='**:violet[STATUS]**',
