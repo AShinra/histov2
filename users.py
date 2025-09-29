@@ -41,7 +41,7 @@ def user_management(client):
 
         rights = st.selectbox(
             label='Rights',
-            options=['admin', 'user'],
+            options=['admin', 'sub-admin', 'user'],
             disabled=rights_disabled,
         )
         submit_user_btn = st.button(
