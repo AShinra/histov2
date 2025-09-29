@@ -49,7 +49,7 @@ def input(client, client_list):
     id_list = list(temp_collection.distinct('_id'))
     
     with st.container(border=True):
-        col1, col2, col3 = st.columns([0.15, 0.6, 0.25], border=True)
+        col1, col2, col3 = st.columns([0.2, 0.55, 0.25], border=True)
         with col1:
             input_date = st.date_input(':calendar: **:violet[DATE]**', key='i_date', format='YYYY-MM-DD')
             input_date = datetime.combine(input_date, datetime.min.time())
