@@ -105,7 +105,7 @@ def main(username, rights):
         settings(client)
     
     if selected == 'User Management':
-        settings(client)
+        user_management(client)
 
     if btn_clearcache:
         st.cache_data.clear()
