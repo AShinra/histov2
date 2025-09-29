@@ -12,6 +12,7 @@ from archive import archive
 from input import input
 from summary import summary
 from settings import settings
+from users import user_management
 
 @st.cache_resource
 def get_logo():
@@ -72,7 +73,10 @@ def main(username, rights):
     with st.sidebar:
 
         if rights=='admin':
-            options_list=['Entry', 'Archive', 'Summary', 'Settings']
+            options_list=['Entry', 'Archive', 'Summary', 'Agency Management', 'User Management']
+            icons_list=['pencil-square', 'archive', 'journals', 'gear', 'people-fill']
+        elif rights=='sub-admin':
+            options_list=['Entry', 'Archive', 'Summary', 'Agency Management']
             icons_list=['pencil-square', 'archive', 'journals', 'gear']
         else:
             options_list=['Archive', 'Summary']
@@ -97,7 +101,10 @@ def main(username, rights):
     if selected == 'Summary':
         summary(client)
     
-    if selected == 'Settings':
+    if selected == 'Agency Management':
+        settings(client)
+    
+    if selected == 'User Management':
         settings(client)
 
     if btn_clearcache:
