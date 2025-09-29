@@ -63,7 +63,7 @@ def summary(client):
             df = df[df['TYPE']==3]
 
         # agency selection
-        agency_list = (df['AGENCY'].unique()).tolist()
+        agency_list = sorted((df['AGENCY'].unique()).tolist())
         
         
         # agency_list = get_agencies_list(client)
