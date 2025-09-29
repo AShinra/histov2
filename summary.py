@@ -63,16 +63,17 @@ def summary(client):
             df = df[df['TYPE']==3]
 
         # agency selection
-        agency_list = sorted(df['AGENCY'].to_list())
-        exit()
-
-        agency_list = get_agencies_list(client)
-        agency_list.insert(0, 'ALL')
+        agency_list = df['AGENCY'].to_list()
+        
+        # agency_list = get_agencies_list(client)
+        # agency_list.insert(0, 'ALL')
 
         agency_selection = st.selectbox(
             label='AGENCY',
             options=agency_list
         )
+
+        exit()
 
         agency_collection = db['agencies']
         if agency_selection != 'ALL':
