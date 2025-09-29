@@ -55,7 +55,7 @@ def input(client, client_list):
             input_date = datetime.combine(input_date, datetime.min.time())
             
             input_captured = st.pills(
-                label='Captured',
+                label='**:violet[Captured]**',
                 options=['Yes', 'No'],
                 default='Yes',
                 width='stretch'
