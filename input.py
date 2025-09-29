@@ -53,16 +53,17 @@ def input(client, client_list):
         with col1:
             input_date = st.date_input(':calendar: **:violet[DATE]**', key='i_date', format='YYYY-MM-DD')
             input_date = datetime.combine(input_date, datetime.min.time())
-            
-            input_captured = st.pills(
-                label='**:violet[STATUS]**',
-                options=['Yes', 'No'],
-                default='Yes',
-                width='stretch'
-            )
 
             cola, colb = st.columns(2)
             with cola:
+                input_captured = st.pills(
+                    label='**:violet[STATUS]**',
+                    options=['Yes', 'No'],
+                    default='Yes',
+                    width='stretch'
+                )
+
+            with colb:
                 radio_reqtype = st.pills(
                     label='**:violet[TYPE]**',
                     options=['Regular', 'Ad Hoc', 'TOA'],
