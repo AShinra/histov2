@@ -72,9 +72,9 @@ def summary(client):
     #             padding-bottom: 0rem !important;
     #             }</style>""", unsafe_allow_html=True)
     
-    # st.markdown("""<style>.st-emotion-cache-pzw1tj {background-color:lightblue;}""",unsafe_allow_html=True)
-    # st.markdown("""<style>.st-emotion-cache-1ubukkv {background-color:lightpink;}""",unsafe_allow_html=True)
-    # st.markdown("""<style>.st-emotion-cache-pxdqmg {background-color:lightgreen;}""",unsafe_allow_html=True)
+    st.markdown("""<style>.st-emotion-cache-pzw1tj {background-color:lightblue;}""",unsafe_allow_html=True)
+    st.markdown("""<style>.st-emotion-cache-1ubukkv {background-color:lightpink;}""",unsafe_allow_html=True)
+    st.markdown("""<style>.st-emotion-cache-pxdqmg {background-color:lightgreen;}""",unsafe_allow_html=True)
 
 
     # st.subheader("Requests and Misses Overview - Year 2025")
