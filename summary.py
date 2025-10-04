@@ -72,9 +72,9 @@ def summary(client):
     #             padding-bottom: 0rem !important;
     #             }</style>""", unsafe_allow_html=True)
     
-    st.markdown("""<style>.st-emotion-cache-pzw1tj {background-color:lightblue;}""",unsafe_allow_html=True)
-    st.markdown("""<style>.st-emotion-cache-1ubukkv {background-color:lightpink;}""",unsafe_allow_html=True)
-    st.markdown("""<style>.st-emotion-cache-pxdqmg {background-color:lightgreen;}""",unsafe_allow_html=True)
+    # st.markdown("""<style>.st-emotion-cache-pzw1tj {background-color:lightblue;}""",unsafe_allow_html=True)
+    # st.markdown("""<style>.st-emotion-cache-1ubukkv {background-color:lightpink;}""",unsafe_allow_html=True)
+    # st.markdown("""<style>.st-emotion-cache-pxdqmg {background-color:lightgreen;}""",unsafe_allow_html=True)
 
 
     # st.subheader("Requests and Misses Overview - Year 2025")
@@ -83,8 +83,8 @@ def summary(client):
         col1, col2, col3, col4 = st.columns([0.4, 0.25, 0.25, 0.1])
 
         with col1:
-            with st.container(border=True):
-                col1a, col1b, col1c, col1d = st.columns([0.15, 0.35, 0.15, 0.35])
+            with st.container():
+                col1a, col1b, col1c, col1d = st.columns([0.10, 0.4, 0.10, 0.4])
                 with col1a:
                     st.write(':blue[**Agency**]')
                 with col1b:
@@ -120,8 +120,8 @@ def summary(client):
                     )
 
         with col2:
-            with st.container(border=True):
-                col2a, col2b = st.columns([0.2, 0.8])
+            with st.container():
+                col2a, col2b = st.columns([0.1, 0.9])
                 with col2a:
                     st.write(':blue[**Type**]')
                 with col2b:
@@ -135,8 +135,8 @@ def summary(client):
                     
         
         with col3:
-            with st.container(border=True):
-                col3a, col3b = st.columns([0.2, 0.8])
+            with st.container():
+                col3a, col3b = st.columns([0.15, 0.85])
                 with col3a:
                     st.write(':blue[**Options**]')
                 with col3b:
@@ -149,7 +149,7 @@ def summary(client):
                         )
         
         with col4:
-            with st.container(border=True):
+            with st.container():
                 
                 year_list = set(df['YEAR'].to_list())
 
@@ -159,70 +159,52 @@ def summary(client):
                     label_visibility='collapsed'
                 )
         
-        colmetric1, colmetric2, colmetric3 = st.columns([2,3,1], border=True)
-        st.markdown("""<style>[data-testid="stMarkdownContainer"]{
-                font-size: large;
-                }</style>""", unsafe_allow_html=True)
-        st.markdown("""<style>[data-testid="stMetricValue"]{
-                font-size: xxx-large;
-                font-weight: bold;
-                }</style>""", unsafe_allow_html=True)
-        st.markdown("""<style>div[data-testid="stMetricValue"]:nth-of-type(2){
-                color: red !important;
-                }</style>""", unsafe_allow_html=True)
-
+        colmetric1, colmetric2, colmetric3 = st.columns([2,3,1])        
         with colmetric1:
-            st.write(f'**Requests**')
-
             colmetric11, colmetric12 = st.columns([1,1])
 
             with colmetric11:
-                with st.container(border=True):
-                    st.metric(
-                    label='**Total**',
+                st.metric(
+                    label=':blue[**Total Requests**]',
                     value=total_requests,
-                    width='stretch'
-                )
+                    width='stretch',
+                    border=True
+                    )
             with colmetric12:
-                with st.container(border=True):
-                    st.metric(
-                    label='Monthly Average',
-                    value=int(total_requests/month_count)
-                )
-            
+                st.metric(
+                    label=':blue[**Monthly Average (Requests)**]',
+                    value=int(total_requests/month_count),
+                    border=True
+                    )
             
         with colmetric2:
-            st.write(f'**Misses**')
-
             colmetric21, colmetric22, colmetric23 = st.columns([1,1,1])
 
             with colmetric21:
-                with st.container(border=True):
-                    st.metric(
-                        label='Total',
-                        value = total_misses
-                )
+                st.metric(
+                    label=':red[**Total Misses**]',
+                    value = total_misses,
+                    border=True
+                    )
             with colmetric22:
-                with st.container(border=True):
-                    st.metric(
-                        label='Monthly Average',
-                        value = int(total_misses/month_count)
-                )
+                st.metric(
+                    label=':red[**Monthly Average (Misses)**]',
+                    value = int(total_misses/month_count),
+                    border=True
+                    )
             with colmetric23:
-                with st.container(border=True):
-                    st.metric(
-                        label='Percentage',
-                        value = f'{(total_misses/total_requests):.2%}'
-                )
+                st.metric(
+                    label=':red[**Percentage of Misses**]',
+                    value = f'{(total_misses/total_requests):.2%}',
+                    border=True
+                    )
         
         with colmetric3:
-            st.write(f'**Captured**')
-
-            with st.container(border=True):
-                st.metric(
-                    label='Total',
-                    value=total_captured
-            )
+            st.metric(
+                label=':green[**Total Captured**]',
+                value=total_captured,
+                border=True
+                )
 
 
         # working dataframe
@@ -248,14 +230,13 @@ def summary(client):
         # st.dataframe(working_df)
         
         if client_selection!='ALL':
-            with st.container(border=True):
-                st.header(f'{client_selection} - Requests and Misses Overview - Year 2025')
+            st.header(f'{client_selection} - Requests and Misses Overview - Year {_year}')
 
-        cola, colb = st.columns([5,1])
+        cola, colb = st.columns([10,1])
         with cola:
             col13, col23 = st.columns([1,1])
             with col13:
-                with st.container(border=True):
+                with st.container(height=350, border=False):
                     _monthly = working_df['MONTH'].value_counts(sort=False)
                     monthly_df = _monthly.to_frame()
                     if monthly_df.empty:
@@ -271,7 +252,7 @@ def summary(client):
                         st.write(_chart1) 
                             
             with col23:
-                with st.container(border=True):
+                with st.container(height=350, border=False):
                     _daily = working_df['DATE'].value_counts(sort=False)
                     daily_df = _daily.to_frame()
                     if daily_df.empty:
@@ -286,7 +267,7 @@ def summary(client):
             
             col14, col24 = st.columns([1,1])
             with col14:
-                with st.container(border=True, height=450):
+                with st.container(border=False, height=450):
                     _fqdn = working_df['FQDN'].value_counts(sort=True)
                     fqdn_df = _fqdn.to_frame()
                     if fqdn_df.empty:
@@ -301,7 +282,7 @@ def summary(client):
                         st.write(_chart2)                   
             
             with col24:
-                with st.container(border=True, height=450):
+                with st.container(border=False, height=450):
                     _tier = working_df['TIER'].value_counts(sort=True)
                     tier_df = _tier.to_frame()
                     if tier_df.empty:
@@ -309,13 +290,18 @@ def summary(client):
                     else:
                         tier_df = tier_df.reset_index()
                         tier_df['TIER'] = tier_df['TIER'].replace({0: 'Unlisted', 1: 'Tier 1', 2: 'Tier 2', 3: 'Tier 3'})
+                        
 
-                        # Create pie chart
-                        pie = alt.Chart(tier_df).mark_arc().encode(
-                            theta=alt.Theta(field="count", type="quantitative"),
-                            color=alt.Color(field="TIER", type="nominal", legend=alt.Legend(orient='left')),
+                        # Create the base chart
+                        base = alt.Chart(tier_df).encode(
+                            theta=alt.Theta("count", stack=True)
+                        )
+                        
+                        # create the slices
+                        pie = base.mark_arc(innerRadius=100, outerRadius=140).encode(
+                            color=alt.Color('TIER', legend=alt.Legend(orient='left')),
+                            order=alt.Order('count', sort='descending'),
                             tooltip=["TIER", "count"]
-
                         ).properties(
                             width=400,
                             height=400,
@@ -327,55 +313,70 @@ def summary(client):
                                 )
                         )
 
-                        st.altair_chart(pie, use_container_width=True)
+                        # Add labels inside pie slices
+                        labels = base.mark_text(radius=160, fontSize=20, fontWeight='bold', color='blue').encode(
+                            text=alt.Text("count"),
+                            order=alt.Order("count", sort="descending")
+)
+
+                        st.altair_chart(pie + labels, use_container_width=True)
 
             st.header('MISSED WEBSITES')
             col15, col25, col35, col45 = st.columns([1, 1, 1, 1])
             with col15:
                 with st.container(border=True, height=500):
-                    st.subheader('TIER 1')
                     tier1_missed_df = working_df[working_df['TIER']==1]
                     if tier1_missed_df.empty:
+                        st.header('TIER 1')
                         st.subheader('No Data to Show')
                     else:
                         tier1_fqdn_missed_df = tier1_missed_df['FQDN'].value_counts().reset_index()
+                        st.header(f'TIER 1 ({tier1_missed_df.shape[0]})')
                         st.dataframe(tier1_fqdn_missed_df, hide_index=True)
             
             with col25:
                 with st.container(border=True, height=500):
-                    st.subheader('TIER 2')
                     tier2_missed_df = working_df[working_df['TIER']==2]
                     if tier2_missed_df.empty:
+                        st.header('TIER 2')
                         st.subheader('No Data to Show')
                     else:
                         tier2_fqdn_missed_df = tier2_missed_df['FQDN'].value_counts().reset_index()
-                        st.dataframe(tier2_fqdn_missed_df, hide_index=True)
+                        st.header(f'TIER 2 ({tier2_missed_df.shape[0]})')
+                        st.dataframe(
+                            tier2_fqdn_missed_df,
+                            hide_index=True)
             
             with col35:
                 with st.container(border=True, height=500):
-                    st.subheader('TIER 3')
                     tier3_missed_df = working_df[working_df['TIER']==3]
                     if tier3_missed_df.empty:
                         st.subheader('No Data to Show')
                     else:
                         tier3_fqdn_missed_df = tier3_missed_df['FQDN'].value_counts().reset_index()
-                        st.dataframe(tier3_fqdn_missed_df, hide_index=True)
+                        st.header(f'TIER 3 ({tier3_missed_df.shape[0]})')
+                        st.dataframe(
+                            tier3_fqdn_missed_df,
+                            hide_index=True)
             
             with col45:
                 with st.container(border=True, height=500):
-                    st.subheader('UNLISTED')
                     tieru_missed_df = working_df[working_df['TIER']==0]
                     if tieru_missed_df.empty:
+                        st.header('UNLISTED')
                         st.subheader('No Data to Show')
                     else:
                         tieru_fqdn_missed_df = tieru_missed_df['FQDN'].value_counts().reset_index()
-                        st.dataframe(tieru_fqdn_missed_df, hide_index=True)
+                        st.header(f'UNLISTED ({tieru_missed_df.shape[0]})')
+                        st.dataframe(
+                            tieru_fqdn_missed_df,
+                            hide_index=True)
 
         with colb:
             if client_selection=='ALL':
                 st.write('')
             else:
-                with st.container(border=True):
+                with st.container():
                     client_df = df[(df['AGENCY']==agency_selection) & (df['CLIENT NAME']==client_selection)]
 
                     if client_df.empty:
@@ -398,25 +399,25 @@ def summary(client):
                         
                         # with st.container(border=True, horizontal_alignment='center'):
                         st.metric(
-                            label=':blue[**Requests**]',
+                            label=':blue[**Total Requests**]',
                             value=client_requests,
                             border=True
                         )
 
                         st.metric(
-                            label=':green[**Captured**]',
+                            label=':green[**Total Captured**]',
                             value=client_captured,
                             border=True
                         )
                         
                         st.metric(
-                            label=':red[**Misses**]',
+                            label=':red[**Total Misses**]',
                             value=client_misses,
                             border=True
                         )
                                             
                         st.metric(
-                            label=':red[**Percentage**]',
+                            label=':red[**Percentage of Misses**]',
                             value=f'{(client_misses/client_requests):.2%}',
                             border=True
                         )
