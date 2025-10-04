@@ -33,6 +33,8 @@ def load_data(_date, client, link):
 
 def input(client, client_list):
 
+    
+
     page_title('Data Entry')
 
     # get collections

@@ -77,9 +77,14 @@ def page_title(title):
         padding-bottom: 0rem;
         padding-left: 5rem;
         padding-right: 5rem;
-    }
+    }    
     </style>
     """,
     unsafe_allow_html=True
-)
-    st.title(f":violet[{title}]")
+    )
+    
+    # st.markdown(
+    #     """<style>h1{color: blue !important;}</style>""", unsafe_allow_html=True)
+    
+    st.title(f":blue[{title}]")
+    

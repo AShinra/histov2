@@ -30,9 +30,20 @@ def archive(client):
         
         with col1:
             radio_options = st.radio(
-                label=':blue[**OPTIONS**]',
+                label=':violet[**OPTIONS**]',
                 options=['Off', 'All Dates', 'All Clients'],
-                horizontal=False)            
+                horizontal=False)
+            
+            if radio_options=='All Dates':
+                client_status = False
+            else:
+                client_status = True
+            
+            if radio_options=='All Clients':
+                date_status = False
+            else:
+                date_status = True
+            
                         
             with st.popover(label=':orange[**Help**]'):
                 st.write('Off - Generates data for chosen client/s and choses dates')
@@ -48,11 +59,12 @@ def archive(client):
                 end_date = today
 
                 _date = st.date_input(
-                    label=':calendar: :blue[**DATE RANGE**]',
+                    label=':calendar: :violet[**DATE RANGE**]',
                     key='a_date',
                     value=(start_date, end_date),
                     min_value=date(2025, 1, 1),
-                    max_value=date(2030, 12, 31))
+                    max_value=date(2030, 12, 31),
+                    disabled=date_status                    )
                 
                 st_date, en_date = _date
                 st_date = st_date.isoformat()
@@ -63,9 +75,11 @@ def archive(client):
     
         with col3:
             _client = st.multiselect(
-                label=':blue[**CLIENT**]',
+                label=':violet[**CLIENT**]',
                 key='a_client',
-                options=client_list)
+                options=client_list,
+                disabled=client_status
+                )
         
     b_search = st.button(':orange[**Search Archive**]' , key='search_archive', use_container_width=True)
         
