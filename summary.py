@@ -67,17 +67,17 @@ def summary(client):
     monthly_data = df['MONTH_NAME'].value_counts(sort=False)
 
     
-    st.markdown("""<style>.st-emotion-cache-r44huj h3{
-                padding-top: 0rem !important;
-                padding-bottom: 0rem !important;
-                }</style>""", unsafe_allow_html=True)
+    # st.markdown("""<style>.st-emotion-cache-r44huj h3{
+    #             padding-top: 0rem !important;
+    #             padding-bottom: 0rem !important;
+    #             }</style>""", unsafe_allow_html=True)
     
-    st.markdown("""<style>.st-emotion-cache-pzw1tj {background-color:lightblue;}""",unsafe_allow_html=True)
-    st.markdown("""<style>.st-emotion-cache-1ubukkv {background-color:lightpink;}""",unsafe_allow_html=True)
-    st.markdown("""<style>.st-emotion-cache-pxdqmg {background-color:lightgreen;}""",unsafe_allow_html=True)
+    # st.markdown("""<style>.st-emotion-cache-pzw1tj {background-color:lightblue;}""",unsafe_allow_html=True)
+    # st.markdown("""<style>.st-emotion-cache-1ubukkv {background-color:lightpink;}""",unsafe_allow_html=True)
+    # st.markdown("""<style>.st-emotion-cache-pxdqmg {background-color:lightgreen;}""",unsafe_allow_html=True)
 
 
-    st.subheader("Requests and Misses Overview - Year 2025")
+    # st.subheader("Requests and Misses Overview - Year 2025")
 
     with st.container(border=True):
         col1, col2, col3, col4 = st.columns([0.4, 0.25, 0.25, 0.1])
