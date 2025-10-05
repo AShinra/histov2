@@ -27,7 +27,7 @@ if __name__ == '__main__':
                 # background-position: center;
                 # background-repeat: no-repeat;}</style>""", unsafe_allow_html=True)
 
-    st.markdown("""<style>.stSidebar.st-emotion-cache-1legitb {background-color: lightgray;}</style>""", unsafe_allow_html=True)
+    st.markdown("""<style>.stSidebar.st-emotion-cache-1legitb {background-color: black;}</style>""", unsafe_allow_html=True)
     
     try:
         st.sidebar.image(get_logo())
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     if st.session_state.logged_in:
         main(st.session_state.username, st.session_state.rights)
         with st.sidebar:
-            if st.button(":violet[**LOGOUT**]", use_container_width=True):
+            if st.button(":orange[**Log Out**]", use_container_width=True):
                 st.session_state.logged_in = False
                 st.rerun()
     else:
@@ -64,7 +64,7 @@ if __name__ == '__main__':
                 type="password",
                 key='login_password')
             submit_btn = st.button(
-                label=':violet[**LOGIN**]',
+                label=':orange[**LOGIN**]',
                 use_container_width=True,
                 key='login_submit_btn'
             )
@@ -73,7 +73,7 @@ if __name__ == '__main__':
         if submit_btn:
             doc = collection.find_one({"username": username})
             if not doc:
-                st.error("No such user")
+                st.sidebar.error("No such user")
             else:
                 try:
                     ph.verify(doc["password_hash"], password)
@@ -82,6 +82,7 @@ if __name__ == '__main__':
                     st.session_state.rights = doc['rights']
                     st.rerun()
                 except Exception:
-                    st.error("Wrong password")
+                    st.sidebar.error("Wrong password")
+                    # st.error("Wrong password")
     
         

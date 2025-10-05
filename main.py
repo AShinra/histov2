@@ -91,7 +91,7 @@ def main(username, rights):
             options=options_list,
             icons=icons_list
         )
-        btn_clearcache = st.button('Clear Cache', use_container_width=True)
+        btn_clearcache = st.button(':orange[**Clear Cache**]', use_container_width=True)
     
     client_list = []
     if selected == 'Entry':

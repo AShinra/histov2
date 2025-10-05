@@ -6,27 +6,6 @@ import time
 import altair as alt
 from common import get_agencies_list, page_title
 
-
-@st.cache_data
-def get_data(_client):
-
-    try:
-        # client = get_gsheet_client()
-        sheet_id = "1VVLZ0O3NncvMjex8gonkgPTfIKzkJh22UON55991_QE"
-        sheet = _client.open_by_key(sheet_id)
-
-        data = sheet.sheet1.get_all_values()
-
-        df = pd.DataFrame(data)
-        df.columns = df.iloc[0]
-        df = df[1:]
-    
-    except Exception as e:
-        st.error(f"Error accessing Google Sheet: {e}")
-
-    return df
-
-
 def summary(client):
     page_title('Summary')
 
@@ -80,18 +59,27 @@ def summary(client):
     # st.subheader("Requests and Misses Overview - Year 2025")
 
     with st.container(border=True):
-        col1, col2, col3, col4 = st.columns([0.4, 0.25, 0.25, 0.1])
+        col1, col2, col3, col4 = st.columns([0.1, 0.4, 0.25, 0.25])
 
         with col1:
-            with st.container():
-                col1a, col1b, col1c, col1d = st.columns([0.10, 0.4, 0.10, 0.4])
+            with st.container(border=True):
+                
+                year_list = set(df['YEAR'].to_list())
+                
+                _year = st.selectbox(
+                    label=f':blue[**Year**]',
+                    options=year_list,
+                    # label_visibility='collapsed'
+                )
+
+        with col2:
+            with st.container(border=True):
+                col1a, col1b = st.columns([1, 1])
                 with col1a:
-                    st.write(':blue[**Agency**]')
-                with col1b:
                     agency_selection = st.selectbox(
-                        label='Agency',
+                        label=f':blue[**Agency**]',
                         options=agency_list,
-                        label_visibility='collapsed'
+                        # label_visibility='collapsed'
                     )
                 
                 # get client list depending on the agency
@@ -110,54 +98,33 @@ def summary(client):
                     client_list_options = sorted(client_list_options) # sort list
                     client_list_options.insert(0, 'ALL')
 
-                with col1c:
-                    st.write(':blue[**Client**]')
-                with col1d:
+                with col1b:
                     client_selection = st.selectbox(
-                        label='Company',
+                        label=f':blue[**Client**]',
                         options=client_list_options,
-                        label_visibility='collapsed'
+                        # label_visibility='collapsed'
                     )
 
-        with col2:
-            with st.container():
-                col2a, col2b = st.columns([0.1, 0.9])
-                with col2a:
-                    st.write(':blue[**Type**]')
-                with col2b:
-                    _type = st.pills(
-                        label='Request Type',
-                        options=['Regular', 'Ad Hoc', 'TOA'],
-                        width='stretch',
-                        label_visibility='collapsed',
-                        default='Regular',
-                        )
-                    
-        
         with col3:
-            with st.container():
-                col3a, col3b = st.columns([0.15, 0.85])
-                with col3a:
-                    st.write(':blue[**Options**]')
-                with col3b:
-                    _captured = st.pills(
-                        label='Options',
-                        options=['Missed', 'Captured'],
-                        width='stretch',
-                        label_visibility='collapsed',
-                        default='Missed',
-                        )
-        
+            with st.container(border=True):
+                _type = st.pills(
+                    label=f':blue[**Request Type**]',
+                    options=['Regular', 'Ad Hoc', 'TOA'],
+                    width='stretch',
+                    # label_visibility='collapsed',
+                    default='Regular',
+                    )
+                    
         with col4:
-            with st.container():
-                
-                year_list = set(df['YEAR'].to_list())
-
-                _year = st.selectbox(
-                    label='Year',
-                    options=year_list,
-                    label_visibility='collapsed'
-                )
+            with st.container(border=True):
+                _captured = st.pills(
+                    label=f':blue[**Options**]',
+                    options=['Missed', 'Captured'],
+                    width='stretch',
+                    # label_visibility='collapsed',
+                    default='Missed',
+                    )
+        
         
         colmetric1, colmetric2, colmetric3 = st.columns([2,3,1])        
         with colmetric1:
@@ -232,7 +199,7 @@ def summary(client):
         if client_selection!='ALL':
             st.header(f'{client_selection} - Requests and Misses Overview - Year {_year}')
 
-        cola, colb = st.columns([10,1])
+        cola, colb = st.columns([8,1])
         with cola:
             col13, col23 = st.columns([1,1])
             with col13:
@@ -351,6 +318,7 @@ def summary(client):
                 with st.container(border=True, height=500):
                     tier3_missed_df = working_df[working_df['TIER']==3]
                     if tier3_missed_df.empty:
+                        st.header('TIER 3')
                         st.subheader('No Data to Show')
                     else:
                         tier3_fqdn_missed_df = tier3_missed_df['FQDN'].value_counts().reset_index()

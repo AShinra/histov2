@@ -26,7 +26,7 @@ def archive(client):
     client_list = sorted(list(dict.fromkeys(client_list)))
     
     with st.container(border=True):
-        col1, col2, col3 = st.columns([0.15, 0.20, 0.65], border=True)
+        col1, col2 = st.columns([0.15, 0.85])
         
         with col1:
             radio_options = st.radio(
@@ -44,44 +44,48 @@ def archive(client):
             else:
                 date_status = True
             
+            if radio_options=='Off':
+                client_status = False
+                date_status = False
                         
-            with st.popover(label=':orange[**Help**]'):
-                st.write('Off - Generates data for chosen client/s and choses dates')
-                st.write('All Dates - Generates data for chosen client/s for all dates')
-                st.write('All Clients - Generates data for chosen date/s for all clients')
+            # with st.popover(label=':orange[**Help**]'):
+            #     st.write('Off - Generates data for chosen client/s and choses dates')
+            #     st.write('All Dates - Generates data for chosen client/s for all dates')
+            #     st.write('All Clients - Generates data for chosen date/s for all clients')
             
             
         with col2:
+            cola, colb = st.columns([1,1])
+            with cola:
+                try:
+                    today = date.today()
+                    start_date = today
+                    end_date = today
 
-            try:
-                today = date.today()
-                start_date = today
-                end_date = today
-
-                _date = st.date_input(
-                    label=':calendar: :violet[**DATE RANGE**]',
-                    key='a_date',
-                    value=(start_date, end_date),
-                    min_value=date(2025, 1, 1),
-                    max_value=date(2030, 12, 31),
-                    disabled=date_status                    )
-                
-                st_date, en_date = _date
-                st_date = st_date.isoformat()
-                en_date = en_date.isoformat()
-                
-            except:
-                st.write("Please select a valid date range.")
+                    _date = st.date_input(
+                        label=':calendar: :violet[**DATE RANGE**]',
+                        key='a_date',
+                        value=(start_date, end_date),
+                        min_value=date(2025, 1, 1),
+                        max_value=date(2030, 12, 31),
+                        disabled=date_status                    )
+                    
+                    st_date, en_date = _date
+                    st_date = st_date.isoformat()
+                    en_date = en_date.isoformat()
+                    
+                except:
+                    st.write("Please select a valid date range.")
     
-        with col3:
-            _client = st.multiselect(
-                label=':violet[**CLIENT**]',
-                key='a_client',
-                options=client_list,
-                disabled=client_status
-                )
+            with colb:
+                _client = st.multiselect(
+                    label=':violet[**CLIENT**]',
+                    key='a_client',
+                    options=client_list,
+                    disabled=client_status
+                    )
         
-    b_search = st.button(':orange[**Search Archive**]' , key='search_archive', use_container_width=True)
+            b_search = st.button(':orange[**Search Archive**]' , key='search_archive', use_container_width=True)
         
      
     if b_search:
