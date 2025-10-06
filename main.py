@@ -75,10 +75,10 @@ def main(username, rights):
     with st.sidebar:
 
         if rights=='admin':
-            options_list=['Entry', 'Archive', 'Summary', 'Agency Management', 'User Management']
+            options_list=['Entry', 'Archive', 'Summary', 'Client Management', 'User Management']
             icons_list=['pencil-square', 'archive', 'journals', 'gear', 'people-fill']
         elif rights=='sub-admin':
-            options_list=['Entry', 'Archive', 'Summary', 'Agency Management']
+            options_list=['Entry', 'Archive', 'Summary', 'Client Management']
             icons_list=['pencil-square', 'archive', 'journals', 'gear']
         else:
             options_list=['Archive', 'Summary']
@@ -103,7 +103,7 @@ def main(username, rights):
     if selected == 'Summary':
         summary(client)
     
-    if selected == 'Agency Management':
+    if selected == 'Client Management':
         settings(client)
     
     if selected == 'User Management':
