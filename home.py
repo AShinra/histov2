@@ -11,7 +11,6 @@ if __name__ == '__main__':
     </style>"""
     st.markdown(hide_streamlit_style, unsafe_allow_html=True)    
 
-
     st.set_page_config(
         layout="wide",
         page_title='HISTO')
@@ -21,12 +20,6 @@ if __name__ == '__main__':
     st.markdown("""<style>[data-testid="manage-app-button"] {display: none !important;}</style>""", unsafe_allow_html=True)
     st.markdown("""<style>[data-testid="stSidebarCollapseButton"] {display: none !important;}</style>""", unsafe_allow_html=True)
     st.markdown("""<style>[data-testid="stSidebarHeader"] {height: 1rem;}</style>""", unsafe_allow_html=True)
-    # st.markdown("""<style>[data-testid="stSidebarHeader"] {display: none !important;}</style>""", unsafe_allow_html=True)
-    # st.markdown("""<style>.stApp {background-image: url("https://i.ibb.co/8D4hLbSX/natural-light-white-background.jpg");
-                # background-size: cover;
-                # background-position: center;
-                # background-repeat: no-repeat;}</style>""", unsafe_allow_html=True)
-
     st.markdown("""<style>.stSidebar.st-emotion-cache-1legitb {background-color: black;}</style>""", unsafe_allow_html=True)
     
     try:
@@ -69,7 +62,6 @@ if __name__ == '__main__':
                 key='login_submit_btn'
             )
 
-    
         if submit_btn:
             doc = collection.find_one({"username": username})
             if not doc:
@@ -83,6 +75,5 @@ if __name__ == '__main__':
                     st.rerun()
                 except Exception:
                     st.sidebar.error("Wrong password")
-                    # st.error("Wrong password")
     
         

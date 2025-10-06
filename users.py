@@ -2,36 +2,20 @@ import streamlit as st
 from common import has_upper_and_number, page_title
 from argon2 import PasswordHasher
 
-
-def user_management(client):
-    # user management
-    page_title('User Management')
-
+def add_user(client):
+    # add user
     db = client.histo
     users = db.users
 
     ph = PasswordHasher()  # default parameters are sensible; tune if needed
-
-    col2a, col2b, col2c = st.columns(3)
     
-    with col2a:
-        with st.container(border=True):
-            username = st.text_input(
-                label='Username',
-                key='entry_username'
-
-            )
-            password = st.text_input(
-                label='Password',
-                type='password',
-                key='entry_password',
-                help='Minimum of 8 characters with an uppercase letter and number'
-            )
-            name = st.text_input(
-                label='Name',
-                key='entry_name'
-            )
-            
+    with st.container(border=True, width=400):
+        st.subheader("👤 User Details")
+        st.divider()
+        username = st.text_input("**Username**", key='entry_username')
+        password = st.text_input("**Password**", type="password", key='entry_password')
+        name = st.text_input("**Name**", key='entry_name')
+        
         if st.session_state.entry_username=='' or st.session_state.entry_password=='' or st.session_state.entry_name=='':
             rights_disabled=True
             btn_disabled=True
@@ -39,18 +23,10 @@ def user_management(client):
             rights_disabled=False
             btn_disabled=False
 
-        rights = st.selectbox(
-            label='Rights',
-            options=['admin', 'sub-admin', 'user'],
-            disabled=rights_disabled,
-        )
-        submit_user_btn = st.button(
-            label='Submit',
-            use_container_width=True, 
-            disabled=btn_disabled,
-        )
-    
-    if submit_user_btn:
+        rights = st.selectbox("**Rights**", ['admin', 'sub-admin', 'user'], disabled=rights_disabled)
+        add_user_btn = st.button("➕ **Add**", use_container_width=True, disabled=btn_disabled)
+
+    if add_user_btn:
         has_upper, has_number, text_length = has_upper_and_number(password)
 
         if has_upper and has_number and text_length:
@@ -69,3 +45,74 @@ def user_management(client):
         elif text_length==False:
             st.error('Should have a minimum of 8 characters')
         st.rerun()
+
+
+def edit_user(client):
+    # edit user
+    db = client.histo
+    users = db.users
+
+    # get the users from the db.users
+    documents = users.find()
+    user_options = [doc['username'] for doc in users.find()]
+        
+    ph = PasswordHasher()  # default parameters are sensible; tune if needed
+
+    with st.container(border=True, width=400):
+        st.subheader("👤 User Details")
+        st.divider()
+
+        edit_user = st.selectbox(
+            label='**Username**',
+            options=user_options
+        )
+        for_edit = st.pills(
+            label='Edit',
+            options=['Password', 'Username'],
+            width='stretch',
+            default='Password'
+        )
+
+        if for_edit=='Password':
+            st.text_input(
+                label='New Password',
+                type='password',
+                key='new_password'
+            )
+        elif for_edit=='Username':
+            st.text_input(
+                label='New Username',
+                key='new_username'
+            )
+        
+        edit_btn = st.button(
+            label='Edit'
+        )
+
+        if edit_btn:
+            if for_edit=='Password':
+                # re hash the newpassword
+                has_upper, has_number, text_length = has_upper_and_number(st.session_state.new_password)
+                if has_upper and has_number and text_length:
+                    pw_hash = ph.hash(st.session_state.new_password)
+                    # Update one document where username = "athan"
+                    users.update_one({"username": edit_user}, {"$set": {"password_hash": pw_hash}})
+                    st.success('Password successfully modified')
+                else:
+                    st.error('Must contain An uppercase, number and more than 8 characters long')
+        
+            elif for_edit=='Username':
+                users.update_one({'username': edit_user}, {'$set': {'username':st.session_state.new_username}})
+                st.success('Username successfully modified')
+
+
+def user_management(client):
+    # user management
+    page_title('User Management')
+
+    tab1, tab2 = st.tabs(['**Add User**', '**Edit User**'])
+
+    with tab1:
+        add_user(client)
+    with tab2:
+        edit_user(client)
