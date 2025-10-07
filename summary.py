@@ -114,6 +114,12 @@ def summary(client):
                     # label_visibility='collapsed',
                     default='Regular',
                     )
+                # _type = option_menu(
+                #     menu_title=None,
+                #     options=['Regular', 'Ad Hoc', 'TOA'],
+                #     icons=[],
+                #     orientation='horizontal'
+                # )
                     
         with col4:
             with st.container(border=True):
