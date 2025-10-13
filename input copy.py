@@ -31,24 +31,24 @@ def load_data(_date, client, link):
     return data
 
 
-def input(client, client_list, agencies_clients):
+def input(client, client_list):
+
+    
 
     page_title('Data Entry')
-    
-    agencies_list = []
-    for k, v in agencies_clients.items():
-        agencies_list.append(k)
 
+    # get collections
+    agencies_list = get_agencies_list(client)
 
+    # load tier data
+    db = client['histo']
+    fqdn_collection = db['tier']
+    fqdn_documents = fqdn_collection.find()
 
     # load temp
-    db = client['histo']
     temp_collection = db['temp']
     temp_collection_count = temp_collection.count_documents({})    
     id_list = list(temp_collection.distinct('_id'))
-
-    if 'in_hyperlink' not in st.session_state:
-        st.session_state.in_hyperlink = ''
     
     with st.container(border=True):
         col1, col2, col3 = st.columns([0.2, 0.55, 0.25], border=True)
@@ -58,14 +58,20 @@ def input(client, client_list, agencies_clients):
 
             cola, colb = st.columns(2, border=True)
             with cola:
-                input_captured = st.radio(
+                input_captured = st.pills(
                     label='**:violet[STATUS]**',
-                    options=['Yes', 'No'])
+                    options=['Yes', 'No'],
+                    default='Yes',
+                    width='stretch'
+                )
 
             with colb:
-                radio_reqtype = st.radio(
+                radio_reqtype = st.pills(
                     label='**:violet[TYPE]**',
-                    options=['Regular', 'Ad Hoc', 'TOA'])
+                    options=['Regular', 'Ad Hoc', 'TOA'],
+                    default='Regular',
+                    width='stretch'
+                )
            
         with col2:
             col2a, col2b = st.columns(2)
@@ -74,16 +80,16 @@ def input(client, client_list, agencies_clients):
                     label='Agency',
                     options=agencies_list,
                     key='in_agency',
-                    accept_new_options=True)
-                
-            # agency_collection = db['agencies']
-            # document = agency_collection.find_one({'AGENCY NAME':input_agency})
-            # companies_list = document['CLIENTS']
+                    accept_new_options=True
+                    )
+            agency_collection = db['agencies']
+            document = agency_collection.find_one({'AGENCY NAME':input_agency})
+            companies_list = document['CLIENTS']
             
             with col2b:
                     input_client = st.selectbox(
                     label='Client',
-                    options=sorted(agencies_clients[input_agency]),
+                    options=companies_list,
                     key='in_client',
                     accept_new_options=True)
             
@@ -135,11 +141,6 @@ def input(client, client_list, agencies_clients):
         
 
     if btn_add:
-
-        # load tier data
-        db = client['histo']
-        fqdn_collection = db['tier']
-        fqdn_documents = fqdn_collection.find()
         
         with st.spinner('Adding Data', show_time=True):
                 
@@ -191,8 +192,7 @@ def input(client, client_list, agencies_clients):
                     result = temp_collection.insert_one(data)
                 else:
                     st.toast('Record already exists!!!')
-
-            del st.session_state['in_hyperlink']
+        
             time.sleep(2)
         st.rerun()
                     

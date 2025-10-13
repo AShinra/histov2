@@ -49,15 +49,26 @@ def clean_url(url: str):
         url =re.sub('www.','', url)
     except:
         pass
-    
 
-def get_agencies_list(client):
+
+def get_agencies_list():
+
+    client = connect_to_mongodb()
+
+    agencies_clients = {}
 
     db = client["histo"]
     collection = db["agencies"]
     cursor = collection.find({}, {'AGENCY NAME':1, '_id':0})
-    
-    return [doc['AGENCY NAME'] for doc in cursor if 'AGENCY NAME' in doc]
+    agency_list = [doc['AGENCY NAME'] for doc in cursor if 'AGENCY NAME' in doc]
+
+    for x in agency_list:
+        cursor = collection.find_one({
+            'AGENCY NAME':x
+        })
+        agencies_clients[x] = cursor.get('CLIENTS')
+
+    return agencies_clients
 
 def has_upper_and_number(text: str) -> bool:
     has_upper = any(c.isupper() for c in text)

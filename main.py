@@ -6,7 +6,7 @@ import time
 from PIL import Image
 import requests
 from io import BytesIO
-from common import connect_to_mongodb
+from common import connect_to_mongodb, get_agencies_list
 
 from archive import archive
 from input import input
@@ -44,6 +44,9 @@ def main(username, rights):
 # if __name__ == "__main__":
 
     client = connect_to_mongodb()
+
+    # get agencies_clients dict
+    agencies_clients = get_agencies_list()
 
     # get_bgimage()
 
@@ -95,7 +98,7 @@ def main(username, rights):
     
     client_list = []
     if selected == 'Entry':
-        input(client, client_list)
+        input(client, client_list, agencies_clients)
     
     if selected == 'Archive':
         archive(client)
