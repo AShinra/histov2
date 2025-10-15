@@ -375,47 +375,114 @@ def summary(client):
                         st.metric(
                             label=':blue[**Total Requests**]',
                             value=client_requests,
-                            border=True
-                        )
+                            border=True)
 
                         st.metric(
                             label=':green[**Total Captured**]',
                             value=client_captured,
-                            border=True
-                        )
+                            border=True)
                         
                         st.metric(
                             label=':red[**Total Misses**]',
                             value=client_misses,
-                            border=True
-                        )
+                            border=True)
                                             
                         st.metric(
                             label=':red[**Percentage of Misses**]',
                             value=f'{(client_misses/client_requests):.2%}',
-                            border=True
-                        )
+                            border=True)
 
                         st.metric(
                             label=f':red[**Tier1 Missed**] ({tier1_missed_df.shape[0]})',
                             value=f'{(tier1_missed_df.shape[0]/client_misses):.2%}',
-                            border=True
-                        )
+                            border=True)
 
                         st.metric(
                             label=f':red[**Tier2 Missed**] ({tier2_missed_df.shape[0]})',
                             value=f'{(tier2_missed_df.shape[0]/client_misses):.2%}',
-                            border=True
-                        )
+                            border=True)
 
                         st.metric(
                             label=f':red[**Tier3 Missed**] ({tier3_missed_df.shape[0]})',
                             value=f'{(tier3_missed_df.shape[0]/client_misses):.2%}',
-                            border=True
-                        )
+                            border=True)
 
                         st.metric(
                             label=f':red[**Unlisted Missed**] ({tieru_missed_df.shape[0]})',
                             value=f'{(tieru_missed_df.shape[0]/client_misses):.2%}',
-                            border=True
-                        )
+                            border=True)
+
+        with st.container(border=True):
+            st.header('Top 3 Websites')
+
+            inquirer_count = working_df[working_df['FQDN'].str.contains('inquirer.net')].shape[0]
+            philstar_count = working_df[working_df['FQDN'].str.contains('philstar.com')].shape[0]
+            mb_count = working_df[working_df['FQDN'].str.contains('mb.com.ph')].shape[0]
+
+            if inquirer_count==0 and philstar_count==0 and mb_count==0:
+                st.write('No Data')
+            else:
+                col1, col2, col3, col4 = st.columns([1, 1, 1, 8])
+                with col1:
+                    st.metric(
+                        label=':blue[**Inquirer**]',
+                        value=inquirer_count,
+                        border=True)
+                    
+                with col2:
+                    st.metric(
+                        label=':yellow[**Philstar**]',
+                        value=philstar_count,
+                        border=True)
+                
+                with col3:
+                    st.metric(
+                        label=':violet[**Manila Bulletin**]',
+                        value=mb_count,
+                        border=True)
+                    
+                with col4:
+                    selected_site = st.selectbox(
+                        label='Website',
+                        options=[
+                            'Inquirer',
+                            'Philstar',
+                            'Manila Bulletin'],
+                            width=200)
+                    
+                if selected_site=='Inquirer':
+                    _site='inquirer.net'
+                elif selected_site=='Philstar':
+                    _site='philstar.com'
+                elif selected_site=='Manila Bulletin':
+                    _site='mb.com.ph'
+                
+                new_df = working_df[working_df['FQDN'].str.contains(_site)]
+                _dates = new_df['MONTH_NAME'].to_list()
+                _dates = list(dict.fromkeys(_dates))
+
+                st.subheader(f'Monthly Breakdown - {selected_site}')
+
+                column_number = len(_dates)
+                cols = st.columns(column_number)
+
+                for i, col in enumerate(cols):
+                    month_count = new_df[new_df['MONTH_NAME']==_dates[i]].shape[0]
+                    with col:
+                        st.metric(
+                            label=_dates[i],
+                            value=month_count,
+                            border=True)            
+
+                st.subheader('Detailed Breakdown')
+                selected_month = st.selectbox(
+                    label='Month',
+                    options=_dates,
+                    width=200)
+                
+                filtered_df = new_df[new_df['MONTH_NAME']==selected_month]
+
+                st.dataframe(filtered_df[['DATE', 'CLIENT NAME', 'LINK']], hide_index=True)
+
+
+    
