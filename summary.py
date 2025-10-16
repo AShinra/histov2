@@ -6,6 +6,9 @@ import time
 import altair as alt
 from common import get_agencies_list, page_title
 
+def make_clickable(url):
+    return f'<a href="{url}" target="_blank">{url[:80]}</a>'
+
 def summary(client):
     page_title('Summary')
 
@@ -17,7 +20,7 @@ def summary(client):
     # convert document to dataframe
     df = pd.DataFrame(documents)
 
-    tab1, tab2 = st.tabs(['General', 'Websites'])
+    tab1, tab2 = st.tabs(['General', 'Website Monitoring'])
 
     with tab1:
         # agency selection
@@ -270,8 +273,7 @@ def summary(client):
 
                             # Create the base chart
                             base = alt.Chart(tier_df).encode(
-                                theta=alt.Theta("count", stack=True)
-                            )
+                                theta=alt.Theta("count", stack=True))
                             
                             # create the slices
                             pie = base.mark_arc(innerRadius=100, outerRadius=140).encode(
@@ -285,15 +287,12 @@ def summary(client):
                                     text=f"TIER {_captured.upper()}",
                                     # anchor="middle",   # centers the title
                                     fontSize=40,
-                                    fontWeight="bold"
-                                    )
-                            )
+                                    fontWeight="bold"))
 
                             # Add labels inside pie slices
                             labels = base.mark_text(radius=160, fontSize=20, fontWeight='bold', color='blue').encode(
                                 text=alt.Text("count"),
-                                order=alt.Order("count", sort="descending")
-    )
+                                order=alt.Order("count", sort="descending"))
 
                             st.altair_chart(pie + labels, use_container_width=True)
 
@@ -417,13 +416,15 @@ def summary(client):
 
     with tab2:
         with st.container(border=True):
-            st.header('Website Monitor')
+            st.markdown("## 🌐 Website Monitor")
 
-            selected_year = st.selectbox(
-                label='Year',
-                options=[2025, 2026],
-                width=200)
-            
+            col1, col2, col3 = st.columns(3, border=True)
+            with col1:
+                selected_year = st.selectbox(
+                    label='Year',
+                    options=[2025, 2026],
+                    width='stretch')
+                        
             working_df = df[(df['CAPTURED']==0) & (df['YEAR']==selected_year) & (df['TYPE']==1)]
 
             pub_dict = {
@@ -438,6 +439,9 @@ def summary(client):
             
             pub_dict = dict(sorted(pub_dict.items()))
 
+            with st.container(border=True):
+                st.markdown("### 🧭 Website Summary")
+
             cols = st.columns(len(pub_dict),)
             for i, col in enumerate(cols):
                 with col:
@@ -446,54 +450,77 @@ def summary(client):
                         value=working_df[working_df['FQDN'].str.contains(list(pub_dict.values())[i])].shape[0],
                         border=True,)
                     
-            col_a, col_b, col_c, col_d = st.columns([1, 1, 1, 6])
-            with col_a:
+            with col2:
                 selected_site = st.selectbox(
                     label='Website',
                     options=sorted(pub_dict.keys()),
-                        width=200)
+                    width='stretch')
             
             _site = pub_dict[selected_site]
             
             new_df = working_df[working_df['FQDN'].str.contains(_site)]
                             
             _dates = new_df['MONTH_NAME'].to_list()
-            _dates = list(dict.fromkeys(_dates))
+            # _dates = list(dict.fromkeys(_dates))
+            _dates = [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December']
 
-            with col_b:
+            with col3:
                 selected_month = st.selectbox(
                     label='Month',
                     options=_dates,
-                    width=200)
-                
-            st.subheader(f'Monthly Breakdown - {selected_site}')
+                    width='stretch')
 
-            column_number = len(_dates)
-            cols = st.columns(column_number)
+            with st.container(border=True):
+                st.markdown(f'### 📰 {selected_site}')
 
-            for i, col in enumerate(cols):
-                month_count = new_df[new_df['MONTH_NAME']==_dates[i]].shape[0]
-                if i==0:
-                    delta_value = 0
-                    month_count_next = 0
-                else:
-                    month_count_next = new_df[new_df['MONTH_NAME']==_dates[i-1]].shape[0]
-                    delta_value = month_count - month_count_next
+            cola, colb = st.columns([1, 1.5], border=True)
+            with cola:
+                st.markdown('#### 📅 Monthly Breakdown')
 
-                with col:
-                    st.metric(
-                        label=_dates[i],
-                        value=month_count,
-                        border=True,
-                        delta=delta_value,
-                        delta_color='inverse')
-
-            st.subheader('Detailed Breakdown')
+                cols = st.columns(4)
+                for i, month_name in enumerate(_dates):
+                    month_count = new_df[new_df['MONTH_NAME']==_dates[i]].shape[0]
+                    if i==0:
+                        delta_value = 0
+                        month_count_next = 0
+                    else:
+                        month_count_next = new_df[new_df['MONTH_NAME']==_dates[i-1]].shape[0]
+                        delta_value = month_count - month_count_next
+                    with cols[i % 4]:
+                    # with col:
+                        st.metric(
+                            label=f'📅 {month_name[:3]}',
+                            value=month_count,
+                            border=True,
+                            delta=delta_value,
+                            delta_color='inverse')
             
-            filtered_df = new_df[new_df['MONTH_NAME']==selected_month]
+            with colb:
+                st.markdown(f'#### 🈷️ {selected_month} Breakdown')
+                
+                filtered_df = new_df[new_df['MONTH_NAME']==selected_month]
 
-            st.dataframe(filtered_df[['DATE', 'CLIENT NAME', 'LINK']], hide_index=True)
-            # st.dataframe(filtered_df, hide_index=True)
+                filtered_df["DATE"] = pd.to_datetime(filtered_df["DATE"]).dt.strftime("%b %d, %Y")
+
+                # filtered_df = filtered_df[['DATE', 'LINK']]
+
+                # filtered_df["LINK"] = filtered_df["LINK"].apply(make_clickable)
+                
+                # st.markdown(filtered_df.to_html(escape=False, index=False), unsafe_allow_html=True)
+                st.dataframe(filtered_df[['DATE', 'CLIENT NAME', 'LINK']], hide_index=True)
+                # st.dataframe(filtered_df, hide_index=True)  
 
 
     
