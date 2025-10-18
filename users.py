@@ -1,11 +1,10 @@
 import streamlit as st
-from common import has_upper_and_number, page_title
+from common import has_upper_and_number, page_title, connect_to_collections
 from argon2 import PasswordHasher
 
-def add_user(client):
+def add_user():
     # add user
-    db = client.histo
-    users = db.users
+    users = connect_to_collections()[4]
 
     ph = PasswordHasher()  # default parameters are sensible; tune if needed
     
@@ -47,10 +46,9 @@ def add_user(client):
         st.rerun()
 
 
-def edit_user(client):
+def edit_user():
     # edit user
-    db = client.histo
-    users = db.users
+    users = connect_to_collections()[4]
 
     # get the users from the db.users
     documents = users.find()
@@ -106,13 +104,13 @@ def edit_user(client):
                 st.success('Username successfully modified')
 
 
-def user_management(client):
+def user_management():
     # user management
     page_title('User Management')
 
     tab1, tab2 = st.tabs(['**Add User**', '**Edit User**'])
 
     with tab1:
-        add_user(client)
+        add_user()
     with tab2:
-        edit_user(client)
+        edit_user()

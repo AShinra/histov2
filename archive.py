@@ -3,19 +3,18 @@ from streamlit_option_menu import option_menu
 import pandas as pd
 from datetime import datetime, date
 import time
-from common import page_title
+from common import page_title, connect_to_collections
 
-def archive(client):
+def archive():
 
     page_title('Archive')
     
-    db = client['histo']
-    collection = db['data']
+    collection = connect_to_collections()[1]
     documents = list(collection.find({}))
 
     df = pd.DataFrame(documents)
     
-    client_collection = db['agencies']
+    client_collection = connect_to_collections()[0]
     cursor = client_collection.find({}, {'CLIENTS':1, '_id':0})
 
     client_list = []
@@ -47,12 +46,6 @@ def archive(client):
             if radio_options=='Off':
                 client_status = False
                 date_status = False
-                        
-            # with st.popover(label=':orange[**Help**]'):
-            #     st.write('Off - Generates data for chosen client/s and choses dates')
-            #     st.write('All Dates - Generates data for chosen client/s for all dates')
-            #     st.write('All Clients - Generates data for chosen date/s for all clients')
-            
             
         with col2:
             cola, colb = st.columns([1,1])

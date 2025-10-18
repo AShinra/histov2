@@ -4,17 +4,16 @@ import pandas as pd
 from datetime import datetime
 import time
 import altair as alt
-from common import get_agencies_list, page_title
+from common import get_agencies_list, page_title, connect_to_mongodb, connect_to_collections
 
 def make_clickable(url):
     return f'<a href="{url}" target="_blank">{url[:80]}</a>'
 
-def summary(client):
+def summary():
     page_title('Summary')
 
     # load mongodb
-    db = client['histo'] #load database
-    collection = db['data'] # get the collection
+    collection = connect_to_collections()[1] # get the collection
     documents = list(collection.find({})) # find all documents
 
     # convert document to dataframe
@@ -50,19 +49,6 @@ def summary(client):
         # get year
         df['YEAR'] = df['DATE'].dt.year
         monthly_data = df['MONTH_NAME'].value_counts(sort=False)
-
-        
-        # st.markdown("""<style>.st-emotion-cache-r44huj h3{
-        #             padding-top: 0rem !important;
-        #             padding-bottom: 0rem !important;
-        #             }</style>""", unsafe_allow_html=True)
-        
-        # st.markdown("""<style>.st-emotion-cache-pzw1tj {background-color:lightblue;}""",unsafe_allow_html=True)
-        # st.markdown("""<style>.st-emotion-cache-1ubukkv {background-color:lightpink;}""",unsafe_allow_html=True)
-        # st.markdown("""<style>.st-emotion-cache-pxdqmg {background-color:lightgreen;}""",unsafe_allow_html=True)
-
-
-        # st.subheader("Requests and Misses Overview - Year 2025")
 
         with st.container(border=True):
             col1, col2, col3, col4 = st.columns([0.1, 0.4, 0.25, 0.25])
@@ -120,12 +106,6 @@ def summary(client):
                         # label_visibility='collapsed',
                         default='Regular',
                         )
-                    # _type = option_menu(
-                    #     menu_title=None,
-                    #     options=['Regular', 'Ad Hoc', 'TOA'],
-                    #     icons=[],
-                    #     orientation='horizontal'
-                    # )
                         
             with col4:
                 with st.container(border=True):
@@ -461,20 +441,7 @@ def summary(client):
             new_df = working_df[working_df['FQDN'].str.contains(_site)]
                             
             _dates = new_df['MONTH_NAME'].to_list()
-            # _dates = list(dict.fromkeys(_dates))
-            _dates = [
-                'January',
-                'February',
-                'March',
-                'April',
-                'May',
-                'June',
-                'July',
-                'August',
-                'September',
-                'October',
-                'November',
-                'December']
+            _dates = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
             with col3:
                 selected_month = st.selectbox(
@@ -499,7 +466,6 @@ def summary(client):
                         month_count_next = new_df[new_df['MONTH_NAME']==_dates[i-1]].shape[0]
                         delta_value = month_count - month_count_next
                     with cols[i % 4]:
-                    # with col:
                         st.metric(
                             label=f'📅 {month_name[:3]}',
                             value=month_count,
@@ -514,13 +480,7 @@ def summary(client):
 
                 filtered_df["DATE"] = pd.to_datetime(filtered_df["DATE"]).dt.strftime("%b %d, %Y")
 
-                # filtered_df = filtered_df[['DATE', 'LINK']]
-
-                # filtered_df["LINK"] = filtered_df["LINK"].apply(make_clickable)
-                
-                # st.markdown(filtered_df.to_html(escape=False, index=False), unsafe_allow_html=True)
-                st.dataframe(filtered_df[['DATE', 'CLIENT NAME', 'LINK']], hide_index=True)
-                # st.dataframe(filtered_df, hide_index=True)  
+                st.dataframe(filtered_df[['DATE', 'CLIENT NAME', 'LINK']], hide_index=True)              
 
 
     

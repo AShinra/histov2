@@ -1,5 +1,5 @@
 import streamlit as st
-from common import connect_to_mongodb
+from common import connect_to_mongodb, connect_to_collections
 from argon2 import PasswordHasher
 from main import main, get_logo
 
@@ -37,9 +37,10 @@ if __name__ == '__main__':
         st.session_state.rights = ''
     
     ph = PasswordHasher()
-    client = connect_to_mongodb()
-    db = client['histo']
-    collection = db['users']
+    # client = connect_to_mongodb()
+    # db = client['histo']
+    # collection = db['users']
+    collection = connect_to_collections()[4]
 
     if st.session_state.logged_in:
         main(st.session_state.username, st.session_state.rights)
@@ -75,5 +76,7 @@ if __name__ == '__main__':
                     st.rerun()
                 except Exception:
                     st.sidebar.error("Wrong password")
+            
+            st.cache_data.clear()
     
         

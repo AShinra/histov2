@@ -3,7 +3,7 @@ from streamlit_option_menu import option_menu
 import pandas as pd
 from datetime import datetime
 import time
-from common import get_fqdn, is_valid_url, get_agencies_list, page_title
+from common import get_fqdn, is_valid_url, get_agencies_list, page_title, connect_to_collections
 
 
 
@@ -31,22 +31,20 @@ def load_data(_date, client, link):
     return data
 
 
-def input(client, client_list, agencies_clients):
+def input():
 
     page_title('Data Entry')
     
+    agencies_clients = get_agencies_list()
+
     agencies_list = []
     for k, v in agencies_clients.items():
         agencies_list.append(k)
 
-
-
     # load temp
-    db = client['histo']
-    temp_collection = db['temp']
+    temp_collection = connect_to_collections()[2]
     temp_collection_count = temp_collection.count_documents({})    
-    id_list = list(temp_collection.distinct('_id'))
-
+    
     if 'in_hyperlink' not in st.session_state:
         st.session_state.in_hyperlink = ''
     
@@ -76,10 +74,6 @@ def input(client, client_list, agencies_clients):
                     key='in_agency',
                     accept_new_options=True)
                 
-            # agency_collection = db['agencies']
-            # document = agency_collection.find_one({'AGENCY NAME':input_agency})
-            # companies_list = document['CLIENTS']
-            
             with col2b:
                     input_client = st.selectbox(
                     label='Client',
@@ -137,8 +131,7 @@ def input(client, client_list, agencies_clients):
     if btn_add:
 
         # load tier data
-        db = client['histo']
-        fqdn_collection = db['tier']
+        fqdn_collection = connect_to_collections()[3]
         fqdn_documents = fqdn_collection.find()
         
         with st.spinner('Adding Data', show_time=True):
@@ -195,12 +188,13 @@ def input(client, client_list, agencies_clients):
             del st.session_state['in_hyperlink']
             time.sleep(2)
         st.rerun()
+        st.cache_data.clear()
                     
     if btn_submit:        
 
         with st.spinner('Sending Record', show_time=True):
 
-            data_collection  = db['data']
+            data_collection  = connect_to_collections()[1]
             
             # count the documents stored in temp collection
             temp_count = temp_collection.count_documents({})
@@ -213,6 +207,7 @@ def input(client, client_list, agencies_clients):
             temp_collection.delete_many({})
         
         st.rerun()
+        st.cache_data.clear()
     
     if btn_delete:
         with st.spinner('Deleting Record', show_time=True):
@@ -221,6 +216,7 @@ def input(client, client_list, agencies_clients):
             time.sleep(2)
         
         st.rerun()
+        st.cache_data.clear()
     
     if btn_delete_all:
         with st.spinner('Deleting All Records', show_time=True):
@@ -228,3 +224,4 @@ def input(client, client_list, agencies_clients):
             time.sleep(2)
 
         st.rerun()    
+        st.cache_data.clear()

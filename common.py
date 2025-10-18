@@ -2,15 +2,64 @@ import streamlit as st
 from pymongo import MongoClient
 import re
 from urllib.parse import urlparse
+from PIL import Image
+import requests
+from io import BytesIO
 
+@st.cache_resource
 def connect_to_mongodb():
-    try:
-        # client = MongoClient("mongodb://192.168.2.156:27017/", serverSelectionTimeoutMS=40000)
-        client = MongoClient('mongodb+srv://jonpuray:vYk9PVyQ7mQCn0Rj@cluster1.v4m9pq1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1')
-    except Exception as e:
-        st.write(e)
+    return MongoClient('mongodb+srv://jonpuray:vYk9PVyQ7mQCn0Rj@cluster1.v4m9pq1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1')
 
-    return client
+@st.cache_resource
+def connect_to_db():
+    client = connect_to_mongodb()
+    return client['histo']
+
+@st.cache_resource
+def connect_to_collections():
+    db = connect_to_db()
+    return db['agencies'], db['data'], db['temp'], db['tier'], db['users']
+
+@st.cache_resource
+def get_agencies_list():
+
+    client = connect_to_mongodb()
+
+    agencies_clients = {}
+
+    db = connect_to_db()
+    collection = db["agencies"]
+    cursor = collection.find({}, {'AGENCY NAME':1, '_id':0})
+    agency_list = [doc['AGENCY NAME'] for doc in cursor if 'AGENCY NAME' in doc]
+
+    for x in agency_list:
+        cursor = collection.find_one({
+            'AGENCY NAME':x
+        })
+        agencies_clients[x] = cursor.get('CLIENTS')
+
+    return agencies_clients
+
+
+@st.cache_resource
+def get_logo():
+    url = "https://i.ibb.co/JRW19H4Y/AShinra-Logo.png"
+    response = requests.get(url)
+    response.raise_for_status()  # Raise an error for bad responses
+    return Image.open(BytesIO(response.content))
+
+@st.cache_resource
+def get_bgimage():
+
+    background_image = """
+    <style>
+    [data-testid="stAppViewContainer"] > .main {
+    background-image: url("https://i.ibb.co/8D4hLbSX/natural-light-white-background.jpg");
+    background-size: 100vw 100vh;  # This sets the size to cover 100% of the viewport width and height
+    background-position: center;
+    background-repeat: no-repeat;}</style>"""
+    st.markdown(background_image, unsafe_allow_html=True)
+
 
 def remove_field_from_document(collection, fieldname):
     collection.update_many(
@@ -51,24 +100,7 @@ def clean_url(url: str):
         pass
 
 
-def get_agencies_list():
 
-    client = connect_to_mongodb()
-
-    agencies_clients = {}
-
-    db = client["histo"]
-    collection = db["agencies"]
-    cursor = collection.find({}, {'AGENCY NAME':1, '_id':0})
-    agency_list = [doc['AGENCY NAME'] for doc in cursor if 'AGENCY NAME' in doc]
-
-    for x in agency_list:
-        cursor = collection.find_one({
-            'AGENCY NAME':x
-        })
-        agencies_clients[x] = cursor.get('CLIENTS')
-
-    return agencies_clients
 
 def has_upper_and_number(text: str) -> bool:
     has_upper = any(c.isupper() for c in text)
