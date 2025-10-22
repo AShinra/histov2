@@ -63,7 +63,7 @@ def get_bgimage():
 def connect_to_zeno():
     client = MongoClient(
     # 'mongodb://admin:q8vm5dz-h29piX%3FMo%26%3ClO4e0zn@mongodb4:27017,arbiter:27017/zeno_db?authSource=admin&replicaSet=rs1',
-    'mongodb://admin:q8vm5dz-h29piX%3FMo%26%3ClO4e0zn@mongodb2:103.198.27.3,arbiter:103.198.27.2/zeno_db?authSource=admin&replicaSet=rs1',
+    'mongodb://admin:q8vm5dz-h29piX%3FMo%26%3ClO4e0zn@mongodb4:103.198.27.3,arbiter:103.198.27.2/zeno_db?authSource=admin&replicaSet=rs1',
     connectTimeoutMS=5000,  # 5 seconds for initial connection
     serverSelectionTimeoutMS=10000, # 10 seconds for server selection
     socketTimeoutMS=30000, # 30 seconds for socket inactivity
