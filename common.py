@@ -40,7 +40,6 @@ def get_agencies_list():
 
     return agencies_clients
 
-
 @st.cache_resource
 def get_logo():
     url = "https://i.ibb.co/JRW19H4Y/AShinra-Logo.png"
@@ -59,6 +58,16 @@ def get_bgimage():
     background-position: center;
     background-repeat: no-repeat;}</style>"""
     st.markdown(background_image, unsafe_allow_html=True)
+
+@st.cache_resource
+def connect_to_zeno():
+    client = MongoClient('mongodb://admin:q8vm5dz-h29piX%3FMo%26%3ClO4e0zn@mongodb4:27017,arbiter:27017/zeno_db?authSource=admin&replicaSet=rs1')
+    return client['zeno_db']
+
+@st.cache_resource
+def connect_to_articles():
+    db = connect_to_zeno()
+    return db["articles_app_article"]
 
 
 def remove_field_from_document(collection, fieldname):

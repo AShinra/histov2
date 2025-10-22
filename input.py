@@ -57,7 +57,7 @@ def input():
             cola, colb = st.columns(2, border=True)
             with cola:
                 input_captured = st.radio(
-                    label='**:violet[STATUS]**',
+                    label='**:violet[CAPTURED]**',
                     options=['Yes', 'No'])
 
             with colb:

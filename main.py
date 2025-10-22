@@ -13,6 +13,8 @@ from input import input
 from summary import summary
 from settings import settings
 from users import user_management
+from team_monitor import team_monitor
+from upload_monitor import upload_monitor
 
 get_logo()
 get_bgimage()
@@ -30,8 +32,8 @@ def main(username, rights):
     with st.sidebar:
 
         if rights=='admin':
-            options_list=['Entry', 'Archive', 'Summary', 'Client Management', 'User Management']
-            icons_list=['pencil-square', 'archive', 'journals', 'gear', 'people-fill']
+            options_list=['Entry', 'Archive', 'Summary', 'Client Management', 'User Management', 'Team Monitor', 'Upload Monitor']
+            icons_list=['pencil-square', 'archive', 'journals', 'gear', 'people-fill', 'people-fill', 'globe2']
         elif rights=='sub-admin':
             options_list=['Entry', 'Archive', 'Summary', 'Client Management']
             icons_list=['pencil-square', 'archive', 'journals', 'gear']
@@ -41,7 +43,7 @@ def main(username, rights):
 
         st.sidebar.header(f':red[Welcome :blue[*{username.title()}*]] 👤')
         selected = option_menu(
-            menu_title='Request History',
+            menu_title='Online Monitoring',
             menu_icon='clock-history',
             options=options_list,
             icons=icons_list
@@ -63,6 +65,12 @@ def main(username, rights):
     
     if selected == 'User Management':
         user_management()
+    
+    if selected == 'Team Monitor':
+        team_monitor()
+    
+    if selected == 'Upload Monitor':
+        upload_monitor()
 
     if btn_clearcache:
         st.cache_data.clear()
