@@ -61,14 +61,16 @@ def get_bgimage():
 
 @st.cache_resource
 def connect_to_zeno():
-    client = MongoClient(
-        'mongodb://admin:q8vm5dz-h29piX%3FMo%26%3ClO4e0zn@mongodb4:27017,arbiter:27017/zeno_db?authSource=admin&replicaSet=rs1',
-        connectTimeoutMS=5000,  # 5 seconds for initial connection
-        serverSelectionTimeoutMS=10000, # 10 seconds for server selection
-        socketTimeoutMS=60000, # 30 seconds for socket inactivity
-    )
-    
-    return client['zeno_db']
+    try:
+        client = MongoClient(
+            'mongodb://admin:q8vm5dz-h29piX%3FMo%26%3ClO4e0zn@mongodb4:27017,arbiter:27017/zeno_db?authSource=admin&replicaSet=rs1',
+            connectTimeoutMS=5000,  # 5 seconds for initial connection
+            serverSelectionTimeoutMS=10000, # 10 seconds for server selection
+            socketTimeoutMS=60000, # 30 seconds for socket inactivity
+        )
+        return client['zeno_db']
+    except:
+        st.toast('Cannot Connect to Database')
 
 @st.cache_resource
 def connect_to_articles():
