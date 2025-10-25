@@ -74,6 +74,7 @@ def main(username, rights):
 
     if btn_clearcache:
         st.cache_data.clear()
+        # st.cache_resource.clear()
     
     
 

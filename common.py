@@ -20,7 +20,7 @@ def connect_to_collections():
     db = connect_to_db()
     return db['agencies'], db['data'], db['temp'], db['tier'], db['users']
 
-@st.cache_resource
+@st.cache_data
 def get_agencies_list():
 
     client = connect_to_mongodb()
@@ -61,14 +61,8 @@ def get_bgimage():
 
 @st.cache_resource
 def connect_to_zeno():
-    client = MongoClient(
-    # 'mongodb://admin:q8vm5dz-h29piX%3FMo%26%3ClO4e0zn@mongodb4:27017,arbiter:27017/zeno_db?authSource=admin&replicaSet=rs1',
-    'mongodb://admin:q8vm5dz-h29piX%3FMo%26%3ClO4e0zn@103.198.27.3:27017,103.198.27.2:27017/zeno_db?authSource=admin&replicaSet=rs1',
-    connectTimeoutMS=5000,  # 5 seconds for initial connection
-    serverSelectionTimeoutMS=10000, # 10 seconds for server selection
-    socketTimeoutMS=30000, # 30 seconds for socket inactivity
-    )
-    return client['zeno_db']
+    client = MongoClient('mongodb://admin:q8vm5dz-h29piX%3FMo%26%3ClO4e0zn@mongodb4:27017,arbiter:27017/zeno_db?authSource=admin&replicaSet=rs1')
+    return client['zeno_db']    
     
 
 @st.cache_resource
