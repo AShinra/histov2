@@ -11,7 +11,7 @@ def team_monitor():
     db = connect_to_zeno()
     article_collection = connect_to_articles()
 
-    collection = db['users_app_user']
+    collection = db["users_app_user"]
     documents = collection.find({
         'department_label_name':'Online News',
         '$or':[
