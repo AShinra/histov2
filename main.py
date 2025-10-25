@@ -22,8 +22,6 @@ get_bgimage()
 def main(username, rights):
 # if __name__ == "__main__":
 
-    client = connect_to_mongodb()
-
     # get agencies_clients dict
     agencies_clients = get_agencies_list()
     
