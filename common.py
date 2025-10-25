@@ -59,6 +59,7 @@ def get_bgimage():
 
 @st.cache_resource
 def connect_to_zeno():
+    st.write(st.secrets["zenodb"]["uri"])
     return MongoClient(st.secrets['zeno']['uri'])    
 
 @st.cache_resource
