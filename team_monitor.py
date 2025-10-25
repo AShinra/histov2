@@ -27,8 +27,6 @@ def team_monitor():
     for document in documents:
         _users[document['first_name']] = document['_id']
     
-    st.write(_users)
-    
     today = date.today()
     yesterday = today - timedelta(days=1)
     
