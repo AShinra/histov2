@@ -59,10 +59,7 @@ def get_bgimage():
 
 @st.cache_resource
 def connect_to_zeno():
-    client = MongoClient('mongodb://admin:q8vm5dz-h29piX%3FMo%26%3ClO4e0zn@mongodb4:27017,arbiter:27017/zeno_db?authSource=admin&replicaSet=rs1')
-    # client = MongoClient('mongodb://admin:q8vm5dz-h29piX%3FMo%26%3ClO4e0zn@103.198.27.3:27017,103.198.27.2:27017/zeno_db?authSource=admin&replicaSet=rs1')
-    return client['zeno_db']    
-    
+    return MongoClient(st.secrets['zeno']['uri'])    
 
 @st.cache_resource
 def connect_to_articles():
