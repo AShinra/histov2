@@ -8,7 +8,8 @@ from io import BytesIO
 
 @st.cache_resource
 def connect_to_mongodb():
-    return MongoClient('mongodb+srv://jonpuray:vYk9PVyQ7mQCn0Rj@cluster1.v4m9pq1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1')
+    uri = st.secrets["mongodb"]["uri"]
+    return MongoClient(uri)
 
 @st.cache_resource
 def connect_to_db():
