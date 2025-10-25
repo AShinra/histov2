@@ -12,6 +12,9 @@ def team_monitor():
     article_collection = connect_to_articles()
 
     collection = db["users_app_user"]
+
+    st.write(collection)
+
     documents = collection.find({
         'department_label_name':'Online News',
         '$or':[
@@ -24,6 +27,8 @@ def team_monitor():
     _users = {}
     for document in documents:
         _users[document['first_name']] = document['_id']
+    
+    st.write(_users)
 
     today = date.today()
     tom = today + timedelta(days=1)
