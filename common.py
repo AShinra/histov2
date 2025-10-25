@@ -67,6 +67,12 @@ def connect_to_articles():
     db = connect_to_zeno()
     return db["articles_app_article"]
 
+@st.cache_resource
+def connect_to_users():
+    db = connect_to_zeno()
+    return db["users_app_user"]
+
+
 
 def remove_field_from_document(collection, fieldname):
     collection.update_many(

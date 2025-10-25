@@ -1,5 +1,5 @@
 import streamlit as st
-from common import connect_to_zeno, connect_to_articles
+from common import connect_to_zeno, connect_to_articles, connect_to_users
 from datetime import date, datetime, timedelta
 import pandas as pd
 
@@ -8,14 +8,13 @@ import pandas as pd
 
 def team_monitor():
 
-    db = connect_to_zeno()
+    # connect to articles collection
     article_collection = connect_to_articles()
 
-    collection = db["users_app_user"]
-
-    st.write(collection)
-
-    documents = collection.find({
+    # connect to users collection
+    user_collection = connect_to_users()
+    
+    documents = user_collection.find({
         'department_label_name':'Online News',
         '$or':[
             {'first_name':'terrence'},
@@ -29,9 +28,9 @@ def team_monitor():
         _users[document['first_name']] = document['_id']
     
     st.write(_users)
-
+    
     today = date.today()
-    tom = today + timedelta(days=1)
+    yesterday = today - timedelta(days=1)
     
     st.subheader('OUTPUT TODAY')
     
@@ -39,9 +38,9 @@ def team_monitor():
     today_day = today.day
     today_year = today.year
 
-    tom_month = tom.month
-    tom_day = tom.day
-    tom_year = tom.year      
+    yesterday_month = yesterday.month
+    yesterday_day = yesterday.day
+    yesterday_year = yesterday.year      
 
     cola, colb = st.columns(2)
     with cola:
@@ -52,8 +51,8 @@ def team_monitor():
             count = article_collection.count_documents({
                 'created_by_id':user_id,
                 "date_created": {
-                    "$gte": datetime(today_year, today_month, today_day, 0, 0, 0),
-                    "$lt": datetime(tom_year, tom_month, tom_day, 0, 0, 0)}})
+                    "$gte": datetime(yesterday_year, yesterday_month, yesterday_day, 16, 0, 0),
+                    "$lt": datetime(today_year, today_month, today_day, 16, 0, 0)}})
             
             with cols[i % 4]:
                 st.metric(
@@ -65,8 +64,8 @@ def team_monitor():
                 results = list(article_collection.find({
                     'created_by_id':user_id,
                     "date_created": {
-                        "$gte": datetime(today_year, today_month, today_day, 0, 0, 0),
-                        "$lt": datetime(tom_year, tom_month, tom_day, 0, 0, 0)}
+                        "$gte": datetime(yesterday_year, yesterday_month, yesterday_day, 16, 0, 0),
+                        "$lt": datetime(today_year, today_month, today_day, 16, 0, 0)}
                         },
                     {
                         '_id':0,
@@ -92,8 +91,8 @@ def team_monitor():
     
     with st.spinner(text='Loading Data...', show_time=True):
         try:
-            st_date = _date[0]
-            en_date = _date[1] + timedelta(days=1)
+            st_date = _date[0] - timedelta(days=1)
+            en_date = _date[1]
 
             st_month = st_date.month
             st_day = st_date.day
@@ -112,8 +111,8 @@ def team_monitor():
                     count = article_collection.count_documents({
                         'created_by_id':user_id,
                         "date_created": {
-                            "$gte": datetime(st_year, st_month, st_day, 0, 0, 0),
-                            "$lt": datetime(en_year, en_month, en_day, 0, 0, 0)}
+                            "$gte": datetime(st_year, st_month, st_day, 16, 0, 0),
+                            "$lt": datetime(en_year, en_month, en_day, 16, 0, 0)}
                     })
                     with cols[i % 4]:
                         st.metric(
