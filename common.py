@@ -24,8 +24,6 @@ def connect_to_collections():
 @st.cache_data
 def get_agencies_list():
 
-    client = connect_to_mongodb()
-
     agencies_clients = {}
 
     db = connect_to_db()
