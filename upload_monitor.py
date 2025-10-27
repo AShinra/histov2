@@ -5,10 +5,9 @@ import streamlit as st
 import pandas as pd
 
 def upload_monitor():
-    st.subheader('WEBSITE UPLOAD MONITORING')
+    common.page_title('Website Upload Monitoring')
 
     # get collection from mongodb
-
     try:
         collection = common.connect_to_zeno_collections('articles_app_article')
     except:

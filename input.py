@@ -106,7 +106,7 @@ def input():
     if btn_add:
 
         # load tier data
-        fqdn_collection = connect_to_collections()[3]
+        fqdn_collection = common.connect_to_collections('tier')
         fqdn_documents = fqdn_collection.find()
         
         with st.spinner('Adding Data', show_time=True):
@@ -130,8 +130,8 @@ def input():
             df = pd.DataFrame(columns=['Date', 'Client', 'Tier', 'Url', 'Captured', 'fqdn', 'Agency', 'Ad Hoc'])
             
             for _hyperlink in _hyperlinks:
-                if is_valid_url(_hyperlink) == True:
-                    fqdn = get_fqdn(_hyperlink)
+                if common.is_valid_url(_hyperlink) == True:
+                    fqdn = common.get_fqdn(_hyperlink)
                     result = fqdn_collection.find_one({'fqdn':fqdn})
                     if result:
                         input_fqdn = result['fqdn']
@@ -169,7 +169,7 @@ def input():
 
         with st.spinner('Sending Record', show_time=True):
 
-            data_collection  = connect_to_collections()[1]
+            data_collection  = common.connect_to_collections('data')
             
             # count the documents stored in temp collection
             temp_count = temp_collection.count_documents({})
