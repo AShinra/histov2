@@ -5,36 +5,7 @@ from datetime import datetime
 import time
 from common import get_fqdn, is_valid_url, get_agencies_list, page_title
 
-
-
-
-@st.dialog('Delete Entry', width='large')
-def delete_entry(data):
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        record_number = int(st.number_input(
-        label='Record Number to Delete',
-        min_value=0,))
-        
-        btn_deleterecord = st.button(
-            label='Delete Record')    
-
-
-@st.cache_data
-def load_data(_date, client, link):
-
-    data = {'DATE':[], 'CLIENT':[], 'LINK':[]}
-
-    data['DATE'].append(_date)
-
-    return data
-
-
 def input(client, client_list):
-
-    
-
     page_title('Data Entry')
 
     # get collections
