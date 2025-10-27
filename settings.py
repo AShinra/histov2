@@ -1,10 +1,9 @@
 import streamlit as st
-from common import get_agencies_list, page_title, connect_to_collections
-
+import common
 
 def add_agency():
-
-    collections = connect_to_collections()[0]
+    # connect to agencies collection
+    collections = common.connect_to_collections('agencies')
 
     with st.container(border=True, width=400):
         new_agency = st.text_input(
@@ -40,7 +39,8 @@ def add_agency():
 
 def add_client():
 
-    collections = connect_to_collections()[0]
+    # connect to agencies collection
+    collections = common.connect_to_collections('agencies')
     agency_options = [doc['AGENCY NAME'] for doc in collections.find()]
     
     with st.container(border=True, width=400):
@@ -81,7 +81,8 @@ def add_client():
 
 def delete_agency():
 
-    collections = connect_to_collections()[0]
+    # connect to agencies collection
+    collections = common.connect_to_collections('agencies')
     agency_options = [doc['AGENCY NAME'] for doc in collections.find()]
 
     with st.container(border=True, width=400):
@@ -105,7 +106,8 @@ def delete_agency():
 
 def delete_client():
 
-    collections = connect_to_collections()[0]
+    # connect to agencie collection
+    collections = common.connect_to_collections('agencies')
     agency_options = [doc['AGENCY NAME'] for doc in collections.find()]
     
     with st.container(border=True, width=400):
@@ -138,11 +140,9 @@ def delete_client():
     
 
 
-
-
 def settings():
     
-    page_title('Client Management')
+    common.page_title('Client Management')
 
     tab1, tab2 = st.tabs(['Add', 'Delete'], )
 

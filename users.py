@@ -1,10 +1,10 @@
 import streamlit as st
-from common import has_upper_and_number, page_title, connect_to_collections
+import common
 from argon2 import PasswordHasher
 
 def add_user():
     # add user
-    users = connect_to_collections()[4]
+    users = common.connect_to_collections('users')
 
     ph = PasswordHasher()  # default parameters are sensible; tune if needed
     
@@ -26,7 +26,7 @@ def add_user():
         add_user_btn = st.button("➕ **Add**", use_container_width=True, disabled=btn_disabled)
 
     if add_user_btn:
-        has_upper, has_number, text_length = has_upper_and_number(password)
+        has_upper, has_number, text_length = common.has_upper_and_number(password)
 
         if has_upper and has_number and text_length:
             pw_hash = ph.hash(password)
@@ -48,7 +48,7 @@ def add_user():
 
 def edit_user():
     # edit user
-    users = connect_to_collections()[4]
+    users = common.connect_to_collections('users')
 
     # get the users from the db.users
     documents = users.find()
@@ -90,7 +90,7 @@ def edit_user():
         if edit_btn:
             if for_edit=='Password':
                 # re hash the newpassword
-                has_upper, has_number, text_length = has_upper_and_number(st.session_state.new_password)
+                has_upper, has_number, text_length = common.has_upper_and_number(st.session_state.new_password)
                 if has_upper and has_number and text_length:
                     pw_hash = ph.hash(st.session_state.new_password)
                     # Update one document where username = "athan"
@@ -106,7 +106,7 @@ def edit_user():
 
 def user_management():
     # user management
-    page_title('User Management')
+    common.page_title('User Management')
 
     tab1, tab2 = st.tabs(['**Add User**', '**Edit User**'])
 

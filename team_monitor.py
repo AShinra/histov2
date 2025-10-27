@@ -1,18 +1,16 @@
 import streamlit as st
-from common import connect_to_zeno, connect_to_articles, connect_to_users
+import common
 from datetime import date, datetime, timedelta
 import pandas as pd
-
-
 
 
 def team_monitor():
 
     # connect to articles collection
-    article_collection = connect_to_articles()
+    article_collection = common.connect_to_zeno_collections('articles_app_article')
 
     # connect to users collection
-    user_collection = connect_to_users()
+    user_collection = common.connect_to_zeno_collections('users_app_user')
     
     documents = user_collection.find({
         'department_label_name':'Online News',

@@ -4,16 +4,16 @@ import pandas as pd
 from datetime import datetime
 import time
 import altair as alt
-from common import get_agencies_list, page_title, connect_to_mongodb, connect_to_collections
+import common
 
 def make_clickable(url):
     return f'<a href="{url}" target="_blank">{url[:80]}</a>'
 
 def summary():
-    page_title('Summary')
+    common.page_title('Summary')
 
-    # load mongodb
-    collection = connect_to_collections()[1] # get the collection
+    # get data collection
+    collection = common.connect_to_collections('data') # get the collection
     documents = list(collection.find({})) # find all documents
 
     # convert document to dataframe

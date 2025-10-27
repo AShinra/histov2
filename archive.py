@@ -3,18 +3,18 @@ from streamlit_option_menu import option_menu
 import pandas as pd
 from datetime import datetime, date
 import time
-from common import page_title, connect_to_collections
+import common
 
 def archive():
 
-    page_title('Archive')
+    common.page_title('Archive')
     
-    collection = connect_to_collections()[1]
+    collection = common.connect_to_collections('data')
     documents = list(collection.find({}))
 
     df = pd.DataFrame(documents)
     
-    client_collection = connect_to_collections()[0]
+    client_collection = common.connect_to_collections('agencies')
     cursor = client_collection.find({}, {'CLIENTS':1, '_id':0})
 
     client_list = []

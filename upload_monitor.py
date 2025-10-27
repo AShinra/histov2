@@ -1,4 +1,4 @@
-from common import connect_to_articles
+import common
 from datetime import date, datetime, timedelta
 from bson.objectid import ObjectId
 import streamlit as st
@@ -10,7 +10,7 @@ def upload_monitor():
     # get collection from mongodb
 
     try:
-        collection = connect_to_articles()
+        collection = common.connect_to_zeno_collections('articles_app_article')
     except:
         pass
     else:

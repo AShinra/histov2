@@ -3,46 +3,21 @@ from streamlit_option_menu import option_menu
 import pandas as pd
 from datetime import datetime
 import time
-from common import get_fqdn, is_valid_url, get_agencies_list, page_title, connect_to_collections
-
-
-
-
-@st.dialog('Delete Entry', width='large')
-def delete_entry(data):
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        record_number = int(st.number_input(
-        label='Record Number to Delete',
-        min_value=0,))
-        
-        btn_deleterecord = st.button(
-            label='Delete Record')    
-
-
-@st.cache_data
-def load_data(_date, client, link):
-
-    data = {'DATE':[], 'CLIENT':[], 'LINK':[]}
-
-    data['DATE'].append(_date)
-
-    return data
+import common
 
 
 def input():
 
-    page_title('Data Entry')
+    common.page_title('Data Entry')
     
-    agencies_clients = get_agencies_list()
+    agencies_clients = common.get_agencies_list()
 
     agencies_list = []
     for k, v in agencies_clients.items():
         agencies_list.append(k)
 
     # load temp
-    temp_collection = connect_to_collections()[2]
+    temp_collection = common.connect_to_collections('temp')
     temp_collection_count = temp_collection.count_documents({})    
     
     if 'in_hyperlink' not in st.session_state:

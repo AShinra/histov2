@@ -16,9 +16,9 @@ def connect_to_db():
     return client['histo']
 
 @st.cache_resource
-def connect_to_collections():
+def connect_to_collections(collection_name):
     db = connect_to_db()
-    return db['agencies'], db['data'], db['temp'], db['tier'], db['users']
+    return db[collection_name]
 
 @st.cache_data
 def get_agencies_list():
@@ -58,19 +58,18 @@ def get_bgimage():
     st.markdown(background_image, unsafe_allow_html=True)
 
 @st.cache_resource
-def connect_to_zeno():
-    client = MongoClient(st.secrets['zenodb']['uri'])
+def connect_to_client():
+    return MongoClient(st.secrets['zenodb']['uri'])
+
+@st.cache_resource
+def connect_to_zenodb():
+    client = connect_to_client()
     return client['zeno_db']
 
 @st.cache_resource
-def connect_to_articles():
-    db = connect_to_zeno()
-    return db["articles_app_article"]
-
-@st.cache_resource
-def connect_to_users():
-    db = connect_to_zeno()
-    return db["users_app_user"]
+def connect_to_zeno_collections(collection_name):
+    db = connect_to_zenodb()
+    return db[collection_name]
 
 
 
