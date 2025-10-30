@@ -111,10 +111,8 @@ def clean_url(url: str):
     except:
         pass
 
-    try:
+    if url[-1] == '/':
         url = url.rstrip('/')
-    except:
-        pass
 
 
 
