@@ -133,6 +133,7 @@ def input():
                 if common.is_valid_url(_hyperlink) == True:
                     fqdn = common.get_fqdn(_hyperlink)
                     result = fqdn_collection.find_one({'fqdn':fqdn})
+                    _hyperlink = common.clean_url(_hyperlink)
                     if result:
                         input_fqdn = result['fqdn']
                         input_tier = result['tier']

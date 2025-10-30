@@ -107,7 +107,12 @@ def clean_url(url: str):
         pass
 
     try:
-        url =re.sub('www.','', url)
+        url = re.sub('www.','', url)
+    except:
+        pass
+
+    try:
+        url = url.rstrip('/')
     except:
         pass
 
