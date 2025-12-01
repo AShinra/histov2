@@ -145,6 +145,28 @@ def page_title(title):
     
     # st.markdown(
     #     """<style>h1{color: blue !important;}</style>""", unsafe_allow_html=True)
-    
-    st.title(f":blue[{title}]")
+
+    st.markdown(
+    f"""
+    <h2 style='text-align: center; 
+               color: white; 
+               background: linear-gradient(90deg, #262730 0%, #3a3b40 40%, #ffffff 100%);
+               padding: 10px; 
+               border-radius: 10px;'>
+        {title}
+    </h2>
+    """,
+    unsafe_allow_html=True)
+    gradient_line()
+
+
+def gradient_line():
+    st.markdown("""
+    <div style='height: 4px; 
+                background: linear-gradient(90deg, #5f27cd, #48dbfb, #10ac84);
+                border-radius: 10px; 
+                margin-bottom: 20px;'>
+    </div>
+    """,
+    unsafe_allow_html=True)
     

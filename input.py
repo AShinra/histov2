@@ -29,9 +29,13 @@ def input():
             input_date = st.date_input(':calendar: **:violet[DATE]**', key='i_date', format='YYYY-MM-DD')
             input_date = datetime.combine(input_date, datetime.min.time())
 
-            verified_by = st.selectbox(
+            common.gradient_line()
+
+            verified_by = st.selectbox( 
                 label='**:violet[VERIFIED BY]**',
                 options=['Joel','Mary', 'Terence', 'Virna'])
+
+            common.gradient_line()
 
             cola, colb = st.columns(2, border=True)
             with cola:
@@ -59,7 +63,8 @@ def input():
                     options=sorted(agencies_clients[input_agency]),
                     key='in_client',
                     accept_new_options=True)
-            
+
+            common.gradient_line()
             input_hyperlink = st.text_area('Hyperlink', key='in_hyperlink')
         
         with col3:
