@@ -24,7 +24,8 @@ def upload_monitor():
             'Manila Times':'manilatimes.net',
             'Manila Standard Today':'manilastandard.net',
             'Daily Tribune':'tribune.net.ph',
-            'Malaya Business Insight':'malaya.com.ph'
+            'Malaya Business Insight':'malaya.com.ph',
+            'Bilyonaryo':'bilyonaryo.com'
         }
         
         st_date = st.date_input(

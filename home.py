@@ -22,10 +22,10 @@ if __name__ == '__main__':
     st.markdown("""<style>[data-testid="stSidebarHeader"] {height: 1rem;}</style>""", unsafe_allow_html=True)
     st.markdown("""<style>.stSidebar.st-emotion-cache-1legitb {background-color: black;}</style>""", unsafe_allow_html=True)
     
-    try:
-        st.sidebar.image(get_logo())
-    except FileNotFoundError:
-        st.sidebar.write("Image file not found. Please check the path.")
+    # try:
+    #     st.sidebar.image(get_logo())
+    # except FileNotFoundError:
+    #     st.sidebar.write("Image file not found. Please check the path.")
 
     if "logged_in" not in st.session_state:
         st.session_state.logged_in = False

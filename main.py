@@ -16,7 +16,7 @@ from users import user_management
 from team_monitor import team_monitor
 from upload_monitor import upload_monitor
 
-get_logo()
+# get_logo()
 get_bgimage()
 
 def main(username, rights):

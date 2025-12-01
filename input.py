@@ -29,6 +29,10 @@ def input():
             input_date = st.date_input(':calendar: **:violet[DATE]**', key='i_date', format='YYYY-MM-DD')
             input_date = datetime.combine(input_date, datetime.min.time())
 
+            verified_by = st.selectbox(
+                label='**:violet[VERIFIED BY]**',
+                options=['Joel','Mary', 'Terence', 'Virna'])
+
             cola, colb = st.columns(2, border=True)
             with cola:
                 input_captured = st.radio(
@@ -152,7 +156,8 @@ def input():
                     'CAPTURED':captured,
                     'FQDN':input_fqdn,
                     'AGENCY':(str(input_agency)).upper(),
-                    'TYPE':reqtype
+                    'TYPE':reqtype,
+                    'VERIFIED BY': verified_by
                 }
 
                 # check if link exists
