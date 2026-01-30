@@ -5,10 +5,47 @@ from urllib.parse import urlparse
 from PIL import Image
 import requests
 from io import BytesIO
+import logging
+import traceback
+import os
 
 @st.cache_resource
 def connect_to_mongodb():
-    return MongoClient(st.secrets["mongodb"]["uri"])    
+    """
+    Connect to MongoDB with sensible timeouts and validate the connection.
+    Looks for a URI in Streamlit secrets under ["mongodb"]["uri"] or the MONGO_URI environment variable.
+    On failure, logs a masked version of the URI and full stacktrace to the app logs.
+    """
+    mongo_uri = None
+    if "mongodb" in st.secrets and "uri" in st.secrets["mongodb"]:
+        mongo_uri = st.secrets["mongodb"]["uri"]
+    else:
+        mongo_uri = os.environ.get("MONGO_URI")
+
+    if not mongo_uri:
+        raise RuntimeError("MongoDB URI not found. Set in Streamlit secrets (mongodb.uri) or MONGO_URI environment variable.")
+
+    def _mask_uri(uri: str) -> str:
+        try:
+            return re.sub(r'://([^:@]+):([^@]+)@', '://<user>:<redacted>@', uri)
+        except Exception:
+            return "<redacted>"
+
+    try:
+        client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000, connectTimeoutMS=5000)
+        # Force a server selection / ping to detect connection issues early
+        client.admin.command('ping')
+        return client
+    except Exception as e:
+        masked = _mask_uri(mongo_uri)
+        logger = logging.getLogger(__name__)
+        if not logger.handlers:
+            handler = logging.FileHandler("logs/mongo_errors.log")
+            handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+            logger.addHandler(handler)
+            logger.setLevel(logging.INFO)
+        logger.error("MongoDB connection failed for URI: %s\n%s", masked, traceback.format_exc())
+        raise RuntimeError("Unable to connect to MongoDB. Full details written to logs.") from e
 
 @st.cache_resource
 def connect_to_db():
