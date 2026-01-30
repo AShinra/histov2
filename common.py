@@ -8,13 +8,15 @@ from io import BytesIO
 import logging
 import traceback
 import os
+import socket
 
 @st.cache_resource
 def connect_to_mongodb():
     """
-    Connect to MongoDB with sensible timeouts and validate the connection.
-    Looks for a URI in Streamlit secrets under ["mongodb"]["uri"] or the MONGO_URI environment variable.
-    On failure, logs a masked version of the URI and full stacktrace to the app logs.
+    Connect to MongoDB with DNS pre-checks and sensible timeouts.
+    - Reads URI from Streamlit secrets or MONGO_URI env var
+    - For non-SRV URIs, pre-resolves each hostname and reports unresolved hosts in the UI
+    - Attempts a `ping` on success; logs full details to `logs/mongo_errors.log` on failure
     """
     mongo_uri = None
     if "mongodb" in st.secrets and "uri" in st.secrets["mongodb"]:
@@ -23,6 +25,8 @@ def connect_to_mongodb():
         mongo_uri = os.environ.get("MONGO_URI")
 
     if not mongo_uri:
+        # Show a friendly message in Streamlit and raise
+        st.error("MongoDB connection details are missing. Set `mongodb.uri` in Streamlit secrets or the `MONGO_URI` environment variable.")
         raise RuntimeError("MongoDB URI not found. Set in Streamlit secrets (mongodb.uri) or MONGO_URI environment variable.")
 
     def _mask_uri(uri: str) -> str:
@@ -31,20 +35,89 @@ def connect_to_mongodb():
         except Exception:
             return "<redacted>"
 
+    # Ensure logs directory exists
+    try:
+        os.makedirs("logs", exist_ok=True)
+    except Exception:
+        pass
+
+    logger = logging.getLogger(__name__)
+    if not logger.handlers:
+        handler = logging.FileHandler("logs/mongo_errors.log")
+        handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+        logger.addHandler(handler)
+        logger.setLevel(logging.INFO)
+
+    # If using SRV, skip manual host pre-check (SRV uses DNS SRV records)
+    if mongo_uri.startswith("mongodb+srv://"):
+        st.info("Using an SRV connection string (mongodb+srv://). Skipping per-host DNS pre-check; driver will resolve SRV.")
+    else:
+        # Extract the hosts portion of the URI (between '://' and the next '/')
+        try:
+            body = mongo_uri.split('://', 1)[1]
+            hosts_part = body.split('/', 1)[0]
+            # strip userinfo if present
+            if '@' in hosts_part:
+                hosts_part = hosts_part.split('@', 1)[1]
+            hosts = [h.strip() for h in hosts_part.split(',') if h.strip()]
+
+            unresolved = []
+            for h in hosts:
+                hostname = h.split(':', 1)[0]
+                try:
+                    socket.getaddrinfo(hostname, None)
+                except Exception:
+                    unresolved.append(hostname)
+
+            if unresolved:
+                msg = (
+                    f"Unable to resolve database hostnames: {', '.join(unresolved)}. "
+                    "These hostnames are likely internal to a Docker network or otherwise not resolvable from this environment. "
+                    "Ensure your `MONGO_URI` uses publicly resolvable hostnames (e.g., Atlas cluster or FQDN/IP), or run the app in the same network where those hostnames resolve. "
+                    "See https://www.mongodb.com/docs/manual/reference/connection-string/ for guidance."
+                )
+                # Show friendly message in Streamlit
+                st.error(msg)
+
+                # Add an expandable debug panel with masked info (does not reveal credentials)
+                with st.expander("Show debug details"):
+                    st.write("**Masked URI:**")
+                    st.code(_mask_uri(mongo_uri))
+                    st.write("**Unresolved hostnames:**")
+                    st.write(", ".join(unresolved))
+                    st.write("**Quick actions:**")
+                    st.markdown(
+                        "- Use a public MongoDB host (Atlas) or FQDN/IP that this environment can resolve\n"
+                        "- Run the app within the same Docker network if hosts are internal\n"
+                        "- Check application logs at `logs/mongo_errors.log` for the full stacktrace"
+                    )
+
+                # Log masked URI with details for debugging
+                logger.error("DNS resolution failed for hosts: %s | URI: %s", unresolved, _mask_uri(mongo_uri))
+                raise RuntimeError("One or more MongoDB hosts could not be resolved. See the app message for troubleshooting steps.")
+        except Exception as e:
+            logger.error("Failed while parsing or resolving hosts: %s\n%s", _mask_uri(mongo_uri), traceback.format_exc())
+            st.error("There was an error parsing your MongoDB URI. Check the format and secrets settings.")
+            raise RuntimeError("Error parsing MongoDB URI") from e
+
+    # Attempt to connect (fail fast)
     try:
         client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000, connectTimeoutMS=5000)
-        # Force a server selection / ping to detect connection issues early
         client.admin.command('ping')
         return client
     except Exception as e:
         masked = _mask_uri(mongo_uri)
-        logger = logging.getLogger(__name__)
-        if not logger.handlers:
-            handler = logging.FileHandler("logs/mongo_errors.log")
-            handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
-            logger.addHandler(handler)
-            logger.setLevel(logging.INFO)
         logger.error("MongoDB connection failed for URI: %s\n%s", masked, traceback.format_exc())
+        st.error("Unable to connect to MongoDB. Full details are recorded in the application logs.")
+
+        # Show masked summary in an expander for convenience
+        with st.expander("Show debug details"):
+            st.write("**Masked URI:**")
+            st.code(masked)
+            st.write("**Error summary:**")
+            st.write(str(e))
+            st.write("See `logs/mongo_errors.log` for the full stacktrace.")
+
         raise RuntimeError("Unable to connect to MongoDB. Full details written to logs.") from e
 
 @st.cache_resource
