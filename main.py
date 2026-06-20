@@ -29,9 +29,12 @@ def main(username, rights):
 
     with st.sidebar:
 
+        # if rights=='admin':
+        #     options_list=['Entry', 'Archive', 'Summary', 'Client Management', 'User Management', 'Team Monitor', 'Upload Monitor']
+        #     icons_list=['pencil-square', 'archive', 'journals', 'gear', 'people-fill', 'people-fill', 'globe2']
         if rights=='admin':
-            options_list=['Entry', 'Archive', 'Summary', 'Client Management', 'User Management', 'Team Monitor', 'Upload Monitor']
-            icons_list=['pencil-square', 'archive', 'journals', 'gear', 'people-fill', 'people-fill', 'globe2']
+            options_list=['Entry', 'Archive', 'Summary', 'Client Management', 'User Management']
+            icons_list=['pencil-square', 'archive', 'journals', 'gear', 'people-fill']
         elif rights=='sub-admin':
             options_list=['Entry', 'Archive', 'Summary', 'Client Management']
             icons_list=['pencil-square', 'archive', 'journals', 'gear']
@@ -64,11 +67,11 @@ def main(username, rights):
     if selected == 'User Management':
         user_management()
     
-    if selected == 'Team Monitor':
-        team_monitor()
+    # if selected == 'Team Monitor':
+    #     team_monitor()
     
-    if selected == 'Upload Monitor':
-        upload_monitor()
+    # if selected == 'Upload Monitor':
+    #     upload_monitor()
 
     if btn_clearcache:
         st.cache_data.clear()

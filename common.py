@@ -10,6 +10,9 @@ import traceback
 import os
 import socket
 
+# Suppress MongoDB driver's verbose SRV logging
+logging.getLogger("pymongo").setLevel(logging.WARNING)
+
 @st.cache_resource
 def connect_to_mongodb():
     """
@@ -50,7 +53,7 @@ def connect_to_mongodb():
 
     # If using SRV, skip manual host pre-check (SRV uses DNS SRV records)
     if mongo_uri.startswith("mongodb+srv://"):
-        st.info("Using an SRV connection string (mongodb+srv://). Skipping per-host DNS pre-check; driver will resolve SRV.")
+        pass
     else:
         # Extract the hosts portion of the URI (between '://' and the next '/')
         try:
@@ -210,21 +213,31 @@ def is_valid_url(url: str) -> bool:
     except ValueError:
         return False
 
-def clean_url(url: str):
+def clean_url(url: str) -> str:
+    """
+    Normalize and clean a URL by:
+    - Removing query parameters and fragments
+    - Removing www. prefix
+    - Removing trailing slashes
+    - Normalizing scheme to https (or http if https not available)
+    """
     try:
-        url = re.sub('https', 'http', url)
-    except:
-        pass
-
-    try:
-        url = re.sub('www.','', url)
-    except:
-        pass
-    
-    if url[-1] == '/':
-        url = url.rstrip('/')
-   
-    return url
+        parsed = urlparse(url)
+        
+        # Reconstruct without query params and fragments
+        scheme = parsed.scheme or 'https'
+        netloc = parsed.netloc.lstrip('www.')
+        path = parsed.path.rstrip('/')
+        
+        # Rebuild the URL without query string and fragment
+        cleaned = f"{scheme}://{netloc}{path}" if path else f"{scheme}://{netloc}"
+        
+        return cleaned
+    except Exception:
+        # Fallback to basic cleaning if parsing fails
+        url = url.split('?')[0].split('#')[0]  # Remove query and fragment
+        url = re.sub(r'^(https?://)(www\.)', r'\1', url, flags=re.IGNORECASE)
+        return url.rstrip('/')
 
 
 
@@ -243,11 +256,18 @@ def page_title(title):
     """
     <style>
     .block-container {
-        padding-top: 1rem; /* Adjust this value as needed (e.g., 0rem for minimal padding) */
+        padding-top: 0rem;
         padding-bottom: 0rem;
         padding-left: 5rem;
         padding-right: 5rem;
-    }    
+    }
+    h2, h3 {
+        margin-top: 0.2rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    p, label {
+        margin-bottom: 0.3rem !important;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -261,7 +281,8 @@ def page_title(title):
     <h2 style='text-align: center; 
                color: white; 
                background: linear-gradient(90deg, #262730 0%, #3a3b40 40%, #ffffff 100%);
-               padding: 10px; 
+               padding: 10px;
+               margin: 0;
                border-radius: 10px;'>
         {title}
     </h2>

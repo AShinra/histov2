@@ -23,54 +23,84 @@ def input():
     if 'in_hyperlink' not in st.session_state:
         st.session_state.in_hyperlink = ''
     
+    # ===== INPUT FORM SECTION =====
+    st.subheader('📝 Entry Form')
     with st.container(border=True):
-        col1, col2, col3 = st.columns([0.2, 0.55, 0.25], border=True)
+        col1, col2 = st.columns([0.35, 0.65])
+        
+        # LEFT COLUMN - Basic Info
         with col1:
-            input_date = st.date_input(':calendar: **:violet[DATE]**', key='i_date', format='YYYY-MM-DD')
-            input_date = datetime.combine(input_date, datetime.min.time())
+            st.markdown('**Basic Information**')
+            cols = st.columns([0.13, 0.37, 0.13, 0.3], gap='small')
+            with cols[0]:
+                st.markdown('**Date**')
+            with cols[1]:
+                input_date = st.date_input(':calendar: Date', key='i_date', format='YYYY-MM-DD', label_visibility='collapsed')
+                input_date = datetime.combine(input_date, datetime.min.time())
 
-            common.gradient_line()
+            with cols[2]:
+                st.markdown('**Verifier**')
+            with cols[3]:
+                verified_by = st.selectbox( 
+                    label='Verified By',
+                    options=['Joel','Mary', 'Terence', 'Virna'],
+                    key='verified_by_select',
+                    label_visibility='collapsed')
 
-            verified_by = st.selectbox( 
-                label='**:violet[VERIFIED BY]**',
-                options=['Joel','Mary', 'Terence', 'Virna'])
-
-            common.gradient_line()
-
-            cola, colb = st.columns(2, border=True)
+            cola, colb = st.columns([0.3, 0.7], gap='small')
             with cola:
                 input_captured = st.radio(
-                    label='**:violet[CAPTURED]**',
-                    options=['Yes', 'No'])
+                    label='Captured',
+                    options=['Yes', 'No'],
+                    horizontal=False)
 
             with colb:
                 radio_reqtype = st.radio(
-                    label='**:violet[TYPE]**',
-                    options=['Regular', 'Ad Hoc', 'TOA'])
+                    label='Type',
+                    options=['Regular', 'Ad Hoc', 'TOA'],
+                    horizontal=False)
            
+        # RIGHT COLUMN - Agency, Client & Links
         with col2:
-            col2a, col2b = st.columns(2)
+            st.markdown('**Link Information**')
+            col2a, col2b = st.columns(2, gap='small')
             with col2a:
-                input_agency = st.selectbox(
-                    label='Agency',
-                    options=agencies_list,
-                    key='in_agency',
-                    accept_new_options=True)
+                cols = st.columns([0.15, 0.85], gap='small')
+                with cols[0]:
+                    st.write('Agency')
+                with cols[1]:
+                    input_agency = st.selectbox(
+                        label='Agency',
+                        options=agencies_list,
+                        key='in_agency',
+                        accept_new_options=False,
+                        label_visibility='collapsed')
                 
             with col2b:
+                cols = st.columns([0.15, 0.85], gap='small')
+                with cols[0]:
+                    st.write('Client')
+                with cols[1]:
                     input_client = st.selectbox(
-                    label='Client',
-                    options=sorted(agencies_clients[input_agency]),
-                    key='in_client',
-                    accept_new_options=True)
-
-            common.gradient_line()
-            input_hyperlink = st.text_area('Hyperlink', key='in_hyperlink')
+                        label='Client',
+                        options=sorted(agencies_clients[input_agency]),
+                        key='in_client',
+                        accept_new_options=False,
+                        label_visibility='collapsed')
+            
+            # st.markdown('**Hyperlinks**')
+            input_hyperlink = st.text_area(
+                label='Hyperlink Input',
+                key='in_hyperlink',
+                height=120,
+                placeholder='Enter one or more hyperlinks (one per line)',
+                label_visibility='collapsed')
+                
+            btn_add = st.button('➕ Add Record' , key='input_archive', use_container_width=True)
         
-        with col3:
-            btn_add = st.button('Add' , key='input_archive', use_container_width=True)                        
-        
-    with st.expander(label='Click to see details', expanded=True):
+    # ===== DATA PREVIEW & MANAGEMENT SECTION =====
+    st.subheader('📊 Records Preview')
+    with st.expander(label='View & Manage Records', expanded=True):
         
         cole1, cole2 = st.columns([0.75, 0.25])
         with cole1:
@@ -78,35 +108,48 @@ def input():
             docs = list(temp_collection.find({}, {'_id':0}))            
             df = pd.DataFrame(docs)
             if df.empty:
-                st.write('No Data to display')
+                st.info('No records added yet. Use the form above to add entries.')
             else:
                 df.index = df.index+1
-                st.dataframe(df)
+                st.dataframe(df, use_container_width=True)
+        
         with cole2:
+            st.markdown('**Actions**')
             with st.container(border=True):
                 if df.empty:
                     btn_submit = st.button(
-                        label='Submit',
+                        label='✅ Submit All',
                         use_container_width=True,
-                        disabled=True
+                        disabled=True,
+                        help='Add records first before submitting'
                     )
                 else:
                     btn_submit = st.button(
-                        label='Submit',
+                        label='✅ Submit All',
                         use_container_width=True,
-                        disabled=False
+                        disabled=False,
+                        help=f'Submit {len(df)} record(s)'
                     )
-                record_no = st.selectbox(
-                label='Record',
-                options = list(range(1, temp_collection_count+1))
-                )
-                btn_delete = st.button(
-                    label='Delete',
-                    use_container_width=True
-                )
+                
+                st.divider()
+                
+                if not df.empty:
+                    record_no = st.selectbox(
+                        label='Select Record',
+                        options = list(range(1, temp_collection_count+1))
+                    )
+                    btn_delete = st.button(
+                        label='🗑️ Delete Record',
+                        use_container_width=True,
+                        help='Remove selected record'
+                    )
+                else:
+                    btn_delete = False
+                
                 btn_delete_all = st.button(
-                    label='Delete All',
-                    use_container_width=True
+                    label='🗑️ Delete All',
+                    use_container_width=True,
+                    help='Remove all records'
                 )
                 
                 
@@ -211,3 +254,4 @@ def input():
 
         st.rerun()    
         st.cache_data.clear()
+    
