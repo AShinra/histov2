@@ -1,3 +1,6 @@
+from enum import auto
+
+from openpyxl import chart
 import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
@@ -395,19 +398,11 @@ def summary():
                                 border=True)
 
     with tab2:
-        with st.container(border=True):
-            st.markdown("## 🌐 Website Monitor")
 
-            col1, col2, col3 = st.columns(3, border=True)
-            with col1:
-                selected_year = st.selectbox(
-                    label='Year',
-                    options=[2025, 2026],
-                    width='stretch')
-                        
-            working_df = df[(df['CAPTURED']==0) & (df['YEAR']==selected_year) & (df['TYPE']==1)]
+        min_year = df['YEAR'].min()
+        max_year = df['YEAR'].max()
 
-            pub_dict = {
+        pub_dict = {
                 'Inquirer':'inquirer.net',
                 'Philstar':'philstar.com',
                 'Manila Bulletin':'mb.com.ph',
@@ -417,10 +412,121 @@ def summary():
                 'Manila Standard':'manilastandard.net',
                 'Daily Tribune':'tribune.net.ph'}
             
-            pub_dict = dict(sorted(pub_dict.items()))
+        pub_dict = dict(sorted(pub_dict.items()))
 
-            with st.container(border=True):
-                st.markdown("### 🧭 Website Summary")
+        # with st.container(border=True):
+        st.markdown(f"## 🗓️ Misses Summary from {min_year} to {max_year}")
+
+        new_pub_dict = {}
+        for k, v in pub_dict.items():
+            if v=='inquirer.net':
+                count = df[(df['CAPTURED']==0) & (df['FQDN'].str.contains(v)) & (df['TYPE']==1)].shape[0]
+            else:
+                count = df[(df['CAPTURED']==0) & (df['FQDN']==v) & (df['TYPE']==1)].shape[0]
+            new_pub_dict[k] = count
+        
+        new_pub_dict = dict(sorted(new_pub_dict.items(), key=lambda item: item[1], reverse=True))
+        
+        cols = st.columns(len(new_pub_dict),)
+        for i, col in enumerate(cols):
+            with col:
+                st.metric(
+                    label=f':orange[**{list(new_pub_dict.keys())[i]}**]',
+                    value=list(new_pub_dict.values())[i],
+                    border=True)
+        
+        df_pub = pd.DataFrame(columns=df.columns)
+        
+        for k, v in pub_dict.items():
+            if v=='inquirer.net':
+                _df = df[(df['CAPTURED']==0) & (df['FQDN'].str.contains(v)) & (df['TYPE']==1)]
+            else:
+                _df = df[(df['CAPTURED']==0) & (df['FQDN']==v) & (df['TYPE']==1)]
+            
+            df_pub = pd.concat([df_pub, _df], ignore_index=True)
+        
+        df_pub['FQDN'] = df_pub['FQDN'].str.replace(r'.*\.inquirer\.net', 'inquirer.net', regex=True)
+
+        # Add publication names
+        domain_to_pub = {v: k for k, v in pub_dict.items()}
+        df_pub['PUBLICATION'] = df_pub['FQDN'].map(domain_to_pub)
+
+        # Count articles per year and publication
+        pub_counts = (
+            df_pub
+            .groupby(['YEAR', 'PUBLICATION'])
+            .size()
+            .reset_index(name='COUNT'))
+
+        with st.container(border=True):
+            st.markdown("### 📊 Yearly Comparison of Missed Articles by Publication")
+            # Altair grouped bar chart
+            base = alt.Chart(pub_counts)
+
+            # Bars
+            bars = (
+                base
+                .mark_bar()
+                .encode(
+                    x=alt.X(
+                        'PUBLICATION:N',
+                        title='Website',
+                        axis=alt.Axis(
+                            labelAngle=0,
+                            labelFontWeight='bold',
+                            labelFontSize=12,
+                            titleFontWeight='bold',
+                            titleFontSize=14
+                        )
+                    ),
+                    xOffset='YEAR:O',
+                    y=alt.Y('COUNT:Q', title='Count'),
+                    color=alt.Color('YEAR:O', title='Year'),
+                    tooltip=['YEAR', 'PUBLICATION', 'COUNT']
+                )
+            )
+
+            # Labels
+            labels = (
+                base
+                .mark_text(
+                    dy=-10,
+                    fontSize=14,
+                    color='white',)
+                .encode(
+                    x=alt.X('PUBLICATION:N'),
+                    xOffset='YEAR:O',
+                    y=alt.Y('COUNT:Q'),
+                    text='COUNT:Q'
+                )
+            )
+
+            chart = (
+                (bars + labels)
+                .properties(
+                    width=700,
+                    height=400
+                )
+            )
+
+            st.altair_chart(chart, use_container_width=True)
+
+        with st.container():
+            st.markdown("## 🔎 Detailed Breakdown")
+            
+            cols = st.columns(3)
+            with cols[0]:
+                cols1 = st.columns([15, 85])
+                with cols1[0]:
+                    st.markdown('Year')
+                with cols1[1]:
+                    selected_year = st.selectbox(
+                        label='Year',
+                        options=list(range(min_year, max_year+1)),
+                        width='stretch',
+                        label_visibility='collapsed')
+                        
+            working_df = df_pub[df_pub['YEAR']==selected_year]
 
             cols = st.columns(len(pub_dict),)
             for i, col in enumerate(cols):
@@ -429,28 +535,117 @@ def summary():
                         label=f':orange[**{list(pub_dict.keys())[i]}**]',
                         value=working_df[working_df['FQDN'].str.contains(list(pub_dict.values())[i])].shape[0],
                         border=True,)
-                    
-            with col2:
-                selected_site = st.selectbox(
-                    label='Website',
-                    options=sorted(pub_dict.keys()),
-                    width='stretch')
             
-            _site = pub_dict[selected_site]
-            
-            new_df = working_df[working_df['FQDN'].str.contains(_site)]
+            col_s = st.columns([0.33, 0.67])
+            with col_s[0]:
+                cols1 = st.columns([15, 85])
+                with cols1[0]:
+                    st.markdown('Website')
+                with cols1[1]:
+                    selected_site = st.selectbox(
+                        label='Website',
+                        options=sorted(pub_dict.keys()),
+                        width='stretch',
+                        label_visibility='collapsed')
+                        
+            with col_s[1]:
+                _fqdn = pub_dict[selected_site]
+                
+                monthly_df = working_df[working_df['FQDN']==_fqdn]
+                                
+                # Add publication names
+                domain_to_pub = {v: k for k, v in pub_dict.items()}
+                monthly_df['PUBLICATION'] = monthly_df['FQDN'].map(domain_to_pub)
+
+                month_counts = (
+                    monthly_df
+                    .groupby(['MONTH_NAME', 'PUBLICATION'])
+                    .size()
+                    .reset_index(name='COUNT'))
                             
-            _dates = new_df['MONTH_NAME'].to_list()
+                # Altair grouped bar chart
+                base = alt.Chart(month_counts)
+
+                # Bars
+                bars = (
+                    base
+                    .mark_bar()
+                    .encode(
+                        x=alt.X(
+                            'MONTH_NAME:N',
+                            title='Month',
+                            sort=[
+                                "January","February","March","April","May","June",
+                                "July","August","September","October","November","December"
+                            ],
+                            axis=alt.Axis(
+                                labelAngle=0,
+                                labelFontWeight='bold',
+                                labelFontSize=12,
+                                titleFontWeight='bold',
+                                titleFontSize=14
+                            )
+                        ),
+                        y=alt.Y('COUNT:Q', title='Count'),
+                        color=alt.Color('PUBLICATION:N', title='Publication'),
+                        xOffset='PUBLICATION:N',
+                        tooltip=['MONTH_NAME', 'PUBLICATION', 'COUNT']
+                    )
+                )
+
+                # Labels
+                labels = (
+                    base
+                    .mark_text(
+                        dy=-8,
+                        fontSize=12,
+                        color='white'
+                    )
+                    .encode(
+                        x=alt.X(
+                            'MONTH_NAME:N',
+                            sort=[
+                                "January","February","March","April","May","June",
+                                "July","August","September","October","November","December"
+                            ]
+                        ),
+                        y=alt.Y('COUNT:Q'),
+                        xOffset='PUBLICATION:N',
+                        text='COUNT:Q'
+                    )
+                )
+
+                chart2 = (
+                    (bars + labels)
+                    .properties(
+                        width=700,
+                        height=400
+                    )
+                )
+
+                st.altair_chart(chart2, use_container_width=True)
+
+
+            # _dates = new_df['MONTH_NAME'].to_list()
             _dates = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+            
+            cols = st.columns(3)
+            with cols[0]:
+                cols1 = st.columns([15, 85])
+                with cols1[0]:
+                    st.markdown('Month')
+                with cols1[1]:
+                    selected_month = st.selectbox(
+                        label='Month',
+                        options=_dates,
+                        width='stretch',
+                        label_visibility='collapsed')
 
-            with col3:
-                selected_month = st.selectbox(
-                    label='Month',
-                    options=_dates,
-                    width='stretch')
 
-            with st.container(border=True):
-                st.markdown(f'### 📰 {selected_site}')
+
+
+            # with st.container(border=True):
+            #     st.markdown(f'### 📰 {selected_site}')
 
             cola, colb = st.columns([1, 1.5], border=True)
             with cola:
@@ -458,12 +653,12 @@ def summary():
 
                 cols = st.columns(4)
                 for i, month_name in enumerate(_dates):
-                    month_count = new_df[new_df['MONTH_NAME']==_dates[i]].shape[0]
+                    month_count = monthly_df[monthly_df['MONTH_NAME']==_dates[i]].shape[0]
                     if i==0:
                         delta_value = 0
                         month_count_next = 0
                     else:
-                        month_count_next = new_df[new_df['MONTH_NAME']==_dates[i-1]].shape[0]
+                        month_count_next = monthly_df[monthly_df['MONTH_NAME']==_dates[i-1]].shape[0]
                         delta_value = month_count - month_count_next
                     with cols[i % 4]:
                         st.metric(
@@ -474,10 +669,10 @@ def summary():
                             delta_color='inverse')
             
             with colb:
-                st.markdown(f'#### 🈷️ {selected_month} Breakdown')
-                
-                filtered_df = new_df[new_df['MONTH_NAME']==selected_month]
+                filtered_df = monthly_df[monthly_df['MONTH_NAME']==selected_month]
 
+                st.markdown(f'#### 🈷️ {selected_month} Details - {filtered_df.shape[0]}')
+                
                 filtered_df["DATE"] = pd.to_datetime(filtered_df["DATE"]).dt.strftime("%b %d, %Y")
 
                 st.dataframe(filtered_df[['DATE', 'CLIENT NAME', 'LINK']], hide_index=True)              
