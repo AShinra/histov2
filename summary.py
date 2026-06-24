@@ -30,16 +30,7 @@ def summary():
         # agency_list = get_agencies_list(client) # from mongdb
         agency_list.insert(0, 'ALL')
 
-        # get total number requests
-        total_requests = df.shape[0]
-
-        # get total number missed
-        df_misses = df[df['CAPTURED']==0]
-        total_misses = df_misses.shape[0]
-
-        # get total number captured
-        df_captured = df[df['CAPTURED']==1]
-        total_captured = df_captured.shape[0]
+        
 
         # get the number of months
         df['MONTH_NAME'] = df['DATE'].dt.month_name()
@@ -66,6 +57,17 @@ def summary():
                         options=year_list,
                         # label_visibility='collapsed'
                     )
+            
+            # get total number requests
+            total_requests = df[df['YEAR']==_year].shape[0]
+
+            # get total number missed
+            df_misses = df[(df['CAPTURED']==0) & (df['YEAR']==_year)]
+            total_misses = df_misses.shape[0]
+
+            # get total number captured
+            df_captured = df[(df['CAPTURED']==1) & (df['YEAR']==_year)]
+            total_captured = df_captured.shape[0]
 
             with col2:
                 with st.container(border=True):
