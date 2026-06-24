@@ -26,9 +26,15 @@ def summary():
 
     with tab1:
         # agency selection
-        agency_list = sorted((df['AGENCY'].unique()).tolist()) # from dataframe result
+        # agency_list = sorted((df['AGENCY'].unique()).tolist()) # from dataframe result
         # agency_list = get_agencies_list(client) # from mongdb
-        agency_list.insert(0, 'ALL')
+        # agency_list.insert(0, 'ALL')
+
+        agencies_clients = common.get_agencies_list()
+
+        agency_list = []
+        for k, v in agencies_clients.items():
+            agency_list.append(k)
 
         
 
@@ -80,20 +86,23 @@ def summary():
                         )
                     
                     # get client list depending on the agency
-                    if agency_selection != 'ALL':
-                        df_agency_filtered = df[df['AGENCY']==agency_selection] # filter dataframe
-                        client_list_options = df_agency_filtered['CLIENT NAME'] # get clients from filtered df
-                        client_list_options = client_list_options.unique() # get the unique values only
-                        client_list_options = client_list_options.tolist() # convert to list
-                        client_list_options = sorted(client_list_options) # sort list
-                        client_list_options.insert(0, 'ALL')
-                    else:
-                        df_agency_filtered = df
-                        client_list_options = df_agency_filtered['CLIENT NAME'] # get clients from filtered df
-                        client_list_options = client_list_options.unique() # get the unique values only
-                        client_list_options = client_list_options.tolist() # convert to list
-                        client_list_options = sorted(client_list_options) # sort list
-                        client_list_options.insert(0, 'ALL')
+                    # if agency_selection != 'ALL':
+                    #     df_agency_filtered = df[df['AGENCY']==agency_selection] # filter dataframe
+                    #     client_list_options = df_agency_filtered['CLIENT NAME'] # get clients from filtered df
+                    #     client_list_options = client_list_options.unique() # get the unique values only
+                    #     client_list_options = client_list_options.tolist() # convert to list
+                    #     client_list_options = sorted(client_list_options) # sort list
+                    #     client_list_options.insert(0, 'ALL')
+                    # else:
+                    #     df_agency_filtered = df
+                    #     client_list_options = df_agency_filtered['CLIENT NAME'] # get clients from filtered df
+                    #     client_list_options = client_list_options.unique() # get the unique values only
+                    #     client_list_options = client_list_options.tolist() # convert to list
+                    #     client_list_options = sorted(client_list_options) # sort list
+                    #     client_list_options.insert(0, 'ALL')
+
+                    agency_dict = common.get_agencies_list()
+                    client_list_options = sorted(agency_dict.get(agency_selection, []))
 
                     with col1b:
                         client_selection = st.selectbox(
@@ -185,12 +194,14 @@ def summary():
             elif _captured=='Captured':
                 capture_type=1
 
-            if agency_selection=='ALL' and client_selection=='ALL':
-                working_df = df[(df['TYPE']==type_selection) & (df['CAPTURED']==capture_type) & (df['YEAR']==_year)]
-            elif agency_selection!='ALL' and client_selection=='ALL':
-                working_df = df[(df['AGENCY']==agency_selection) & (df['TYPE']==type_selection) & (df['CAPTURED']==capture_type & (df['YEAR']==_year))]
-            elif agency_selection!='ALL' and client_selection!='ALL':
-                working_df = df[(df['AGENCY']==agency_selection) & (df['CLIENT NAME']==client_selection) & (df['TYPE']==type_selection) & (df['CAPTURED']==capture_type & (df['YEAR']==_year))]
+            # if agency_selection=='ALL' and client_selection=='ALL':
+            #     working_df = df[(df['TYPE']==type_selection) & (df['CAPTURED']==capture_type) & (df['YEAR']==_year)]
+            # elif agency_selection!='ALL' and client_selection=='ALL':
+            #     working_df = df[(df['AGENCY']==agency_selection) & (df['TYPE']==type_selection) & (df['CAPTURED']==capture_type & (df['YEAR']==_year))]
+            # elif agency_selection!='ALL' and client_selection!='ALL':
+            #     working_df = df[(df['AGENCY']==agency_selection) & (df['CLIENT NAME']==client_selection) & (df['TYPE']==type_selection) & (df['CAPTURED']==capture_type & (df['YEAR']==_year))]
+            
+            working_df = df[(df['AGENCY']==agency_selection) & (df['TYPE']==type_selection) & (df['CAPTURED']==capture_type) & (df['YEAR']==_year)]
             # st.dataframe(working_df)
             
             if client_selection!='ALL':
@@ -442,7 +453,7 @@ def summary():
         for k, v in pub_dict.items():
             if v=='inquirer.net':
                 _df = df[(df['CAPTURED']==0) & (df['FQDN'].str.contains(v)) & (df['TYPE']==1)]
-            else:
+            elif v!='inquirer.net':
                 _df = df[(df['CAPTURED']==0) & (df['FQDN']==v) & (df['TYPE']==1)]
             
             df_pub = pd.concat([df_pub, _df], ignore_index=True)
