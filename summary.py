@@ -510,7 +510,7 @@ def summary():
                 .mark_text(
                     dy=-10,
                     fontSize=14,
-                    color='white',)
+                    color='black',)
                 .encode(
                     x=alt.X('PUBLICATION:N'),
                     xOffset='YEAR:O',
@@ -617,7 +617,7 @@ def summary():
                     .mark_text(
                         dy=-8,
                         fontSize=12,
-                        color='white'
+                        color='black'
                     )
                     .encode(
                         x=alt.X(
