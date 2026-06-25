@@ -90,40 +90,36 @@ def input():
                 df.index = df.index+1
                 st.dataframe(df, width='stretch', height=200)
             
+            if df.empty:
+                disable_button=True
+                record_options = []
+            else:
+                disable_button=False
+                record_options = list(range(1, temp_collection_count+1))
+
+
             with st.container():
-                if df.empty:
-                    btn_submit = st.button(
-                        label='✅ Submit All',
-                        width='stretch',
-                        disabled=True,
-                        help='Add records first before submitting'
-                    )
-                else:
-                    btn_submit = st.button(
-                        label='✅ Submit All',
-                        width='stretch',
-                        disabled=False,
-                        help=f'Submit {len(df)} record(s)'
-                    )
+                btn_submit = st.button(
+                    label='✅ Submit All',
+                    width='stretch',
+                    disabled=disable_button,
+                    help='Add records first before submitting')                
+                                
+                record_no = st.selectbox(
+                    label='Select Record',
+                    options = record_options)
                 
-                if not df.empty:
-                    record_no = st.selectbox(
-                        label='Select Record',
-                        options = list(range(1, temp_collection_count+1))
-                    )
-                    btn_delete = st.button(
-                        label='🗑️ Delete Record',
-                        width='stretch',
-                        help='Remove selected record'
-                    )
-                else:
-                    btn_delete = False
-                
+                btn_delete = st.button(
+                    label='🗑️ Delete Record',
+                    width='stretch',
+                    disabled=disable_button,
+                    help='Remove selected record')
+                                
                 btn_delete_all = st.button(
                     label='🗑️ Delete All',
                     width='stretch',
-                    help='Remove all records'
-                )
+                    disabled=disable_button,
+                    help='Remove all records')
                 
                 
         
