@@ -25,13 +25,40 @@ def main(username, rights):
     # get agencies_clients dict
     agencies_clients = get_agencies_list()
     
-    st.markdown("""<style>[data-testid="stHeader"] {display: none;}</style>""", unsafe_allow_html=True)
+    # Ruby Charcoal Twilight theme for main content with small caps
+    main_theme = """<style>
+    /* Small caps font */
+    * {
+        font-variant: small-caps;
+        font-weight: 600;
+    }
+    
+    [data-testid="stHeader"] {display: none;}
+    
+    .stSidebar [data-testid="stMarkdownContainer"] h1 {
+        color: #C41E3A !important;
+    }
+    
+    .stSidebar .stMarkdown {
+        color: #F5F1E8 !important;
+    }
+    
+    .option-menu {
+        background-color: #36454F !important;
+    }
+    
+    .option-menu button {
+        color: #F5F1E8 !important;
+    }
+    
+    .option-menu button:hover {
+        background-color: #8B7BA8 !important;
+    }
+    </style>"""
+    st.markdown(main_theme, unsafe_allow_html=True)
 
     with st.sidebar:
 
-        # if rights=='admin':
-        #     options_list=['Entry', 'Archive', 'Summary', 'Client Management', 'User Management', 'Team Monitor', 'Upload Monitor']
-        #     icons_list=['pencil-square', 'archive', 'journals', 'gear', 'people-fill', 'people-fill', 'globe2']
         if rights=='admin':
             options_list=['Entry', 'Archive', 'Summary', 'Client Management', 'User Management']
             icons_list=['pencil-square', 'archive', 'journals', 'gear', 'people-fill']
@@ -42,14 +69,14 @@ def main(username, rights):
             options_list=['Archive', 'Summary']
             icons_list=['archive', 'journals']
 
-        st.sidebar.header(f':red[Welcome :blue[*{username.title()}*]] 👤')
+        st.sidebar.header(f'Welcome **{username.title()}** 👤')
         selected = option_menu(
             menu_title='Online Monitoring',
             menu_icon='clock-history',
             options=options_list,
             icons=icons_list
         )
-        btn_clearcache = st.button(':orange[**Reset**]', width='stretch')
+        btn_clearcache = st.button('🔄 **Reset**', width='stretch')
     
     client_list = []
     if selected == 'Entry':

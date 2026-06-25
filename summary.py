@@ -13,6 +13,11 @@ def make_clickable(url):
     return f'<a href="{url}" target="_blank">{url[:80]}</a>'
 
 def summary():
+    # Reduce vertical spacing with CSS
+    st.markdown("""<style>
+    div[data-testid="stVerticalBlock"] {gap: 0.5rem;}
+    </style>""", unsafe_allow_html=True)
+
     common.page_title('Summary')
 
     # get data collection

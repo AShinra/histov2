@@ -3,6 +3,11 @@ import common
 from argon2 import PasswordHasher
 
 def add_user():
+    # Reduce vertical spacing with CSS
+    st.markdown("""<style>
+    div[data-testid="stVerticalBlock"] {gap: 0.5rem;}
+    </style>""", unsafe_allow_html=True)
+
     # add user
     users = common.connect_to_collections('users')
 

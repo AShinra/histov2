@@ -1,8 +1,8 @@
 [theme]
-primaryColor="#03fffb"
-backgroundColor="#000000"
-secondaryBackgroundColor="#1d1d1e"
-textColor="#ffffff"
+primaryColor="#F54B5D"
+backgroundColor="#FFFFFF"
+secondaryBackgroundColor="#C1C0C0"
+textColor="#000000"
 font="sans serif"
 [server]
 maxUploadSize=500

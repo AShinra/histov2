@@ -6,6 +6,10 @@ import time
 import common
 
 def archive():
+    # Reduce vertical spacing with CSS
+    st.markdown("""<style>
+    div[data-testid="stVerticalBlock"] {gap: 0.5rem;}
+    </style>""", unsafe_allow_html=True)
 
     common.page_title('Archive')
     

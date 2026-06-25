@@ -141,6 +141,14 @@ def delete_client():
 
 
 def settings():
+    # Reduce vertical spacing with CSS and apply small caps font
+    st.markdown("""<style>
+    * {
+        font-variant: small-caps;
+        font-weight: 600;
+    }
+    div[data-testid="stVerticalBlock"] {gap: 0.5rem;}
+    </style>""", unsafe_allow_html=True)
     
     common.page_title('Client Management')
 

@@ -251,6 +251,7 @@ def has_upper_and_number(text: str) -> bool:
         text_length = False
     return has_upper, has_digit, text_length
 
+@st.cache_resource
 def page_title(title):
     st.markdown(
     """
@@ -264,26 +265,28 @@ def page_title(title):
     h2, h3 {
         margin-top: 0.2rem !important;
         margin-bottom: 0.5rem !important;
+        font-variant: small-caps;
+        font-weight: 600;
     }
     p, label {
         margin-bottom: 0.3rem !important;
+        font-variant: small-caps;
+        font-weight: 600;
     }
     </style>
     """,
     unsafe_allow_html=True
     )
-    
-    # st.markdown(
-    #     """<style>h1{color: blue !important;}</style>""", unsafe_allow_html=True)
 
     st.markdown(
     f"""
     <h2 style='text-align: center; 
                color: white; 
-               background: linear-gradient(90deg, #262730 0%, #3a3b40 40%, #ffffff 100%);
                padding: 10px;
                margin: 0;
-               border-radius: 10px;'>
+               border-radius: 10px;
+               font-variant: small-caps;
+               font-weight: 600;'>
         {title}
     </h2>
     """,
