@@ -55,17 +55,17 @@ def input():
 
             cols = st.columns([3.5, 6.5], gap='small')
             with cols[0]:
-                input_captured = st.pills(
+                input_captured = st.radio(
                     label='Captured',
                     options=['Yes', 'No'],
                     width='stretch',
-                    default='Yes')
+                    horizontal=True)
             with cols[1]:
-                radio_reqtype = st.pills(
+                radio_reqtype = st.radio(
                     label='Type',
                     options=['Regular', 'Ad Hoc', 'TOA'],
                     width='stretch',
-                    default='Regular')
+                    horizontal=True)
             
             # st.markdown('**Hyperlinks**')
             input_hyperlink = st.text_area(
@@ -96,7 +96,6 @@ def input():
             else:
                 disable_button=False
                 record_options = list(range(1, temp_collection_count+1))
-
 
             with st.container():
                 btn_submit = st.button(
