@@ -27,8 +27,9 @@ if __name__ == '__main__':
     
     /* Small caps font for entire application */
     * {
-        font-variant: small-caps;
-        font-weight: 600;
+        font-variant: small-caps !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.02em !important;
     }
     
     /* Hide streamlit toolbar */
@@ -74,6 +75,11 @@ if __name__ == '__main__':
     .stMarkdown [style*="orange"] {
         color: #C41E3A !important;
     }
+
+    div[data-testid="stTextInput"] label {
+    color: white !important;
+    }
+
     </style>"""
     st.markdown(theme_style, unsafe_allow_html=True)
     
@@ -97,7 +103,7 @@ if __name__ == '__main__':
     if st.session_state.logged_in:
         main(st.session_state.username, st.session_state.rights)
         with st.sidebar:
-            if st.button("🚪 **Log Out**", use_container_width=True):
+            if st.button("🚪 **Log Out**", width='stretch'):
                 st.session_state.logged_in = False
                 st.rerun()
     else:
@@ -111,7 +117,7 @@ if __name__ == '__main__':
                 key='login_password')
             submit_btn = st.button(
                 label='✅ **LOGIN**',
-                use_container_width=True,
+                width='stretch',
                 key='login_submit_btn'
             )
 

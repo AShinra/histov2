@@ -161,13 +161,24 @@ def get_logo():
 @st.cache_resource
 def get_bgimage():
 
+    # Global background and font styling. Import a Google Font and apply it with high specificity
     background_image = """
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap');
+
+    /* Apply global font to Streamlit app and sidebar */
+    html, body, [data-testid="stAppViewContainer"], .stApp, .block-container, .main, .stSidebar {
+        font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial !important;
+    }
+
+    /* Background image for main app view */
     [data-testid="stAppViewContainer"] > .main {
-    background-image: url("https://i.ibb.co/8D4hLbSX/natural-light-white-background.jpg");
-    background-size: 100vw 100vh;  # This sets the size to cover 100% of the viewport width and height
-    background-position: center;
-    background-repeat: no-repeat;}</style>"""
+        background-image: url("https://i.ibb.co/8D4hLbSX/natural-light-white-background.jpg");
+        background-size: 100vw 100vh; /* cover viewport */
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    </style>"""
     st.markdown(background_image, unsafe_allow_html=True)
 
 @st.cache_resource
@@ -303,4 +314,7 @@ def gradient_line():
     </div>
     """,
     unsafe_allow_html=True)
+
+def label_name(label: str, font_color: str='black'):
+    return st.markdown(f'<label style="color: {font_color};">{label}</label>', unsafe_allow_html=True)
     

@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime
 import time
 import common
+import modals
 
 
 def input():
@@ -52,6 +53,17 @@ def input():
     body {
         color: #F5F1E8 !important;
     }
+    
+    /* Text area styling to match select boxes */
+    .stTextArea textarea {
+        background-color: #C1C0C0 !important;
+        color: #262730 !important;
+        border-color: #ddd !important;
+    }
+    .stTextArea textarea:focus {
+        background-color: #C1C0C0 !important;
+        border-color: #F54B5D !important;
+    }
     </style>""", unsafe_allow_html=True)
 
     common.page_title('Data Entry')
@@ -68,43 +80,74 @@ def input():
         with st.container(border=True):
             sub_cols = st.columns([3.5, 6.5], gap='small')
             with sub_cols[0]:
+                
+                common.label_name('Verifier')
                 verified_by = st.selectbox(
                     label='Verifier',
                     options=['Joel','Mary', 'Terence', 'Virna'],
-                    key='verified_by_select')
-                input_date = st.date_input('Date', key='i_date', format='YYYY-MM-DD')
+                    key='verified_by_select',
+                    label_visibility='collapsed')
+                
+                common.label_name('Date')
+                input_date = st.date_input(
+                    label='Date',
+                    key='i_date',
+                    format='YYYY-MM-DD',
+                    label_visibility='collapsed')
                 input_date = datetime.combine(input_date, datetime.min.time())
+
             with sub_cols[1]:
+                
+                common.label_name('Agency')
                 input_agency = st.selectbox(
                     label='Agency',
                     options=agencies_list,
                     key='in_agency',
-                    accept_new_options=False)
+                    accept_new_options=False,
+                    label_visibility='collapsed')
+                
+                common.label_name('Client')
                 input_client = st.selectbox(
                     label='Client',
                     options=sorted(agencies_clients[input_agency]),
                     key='in_client',
-                    accept_new_options=False)
+                    accept_new_options=False,
+                    label_visibility='collapsed')
+                
             cols = st.columns([3.5, 6.5], gap='small')
             with cols[0]:
+
+                common.label_name('Captured')
                 input_captured = st.radio(
                     label='Captured',
                     options=['Yes', 'No'],
                     width='stretch',
-                    horizontal=True)
+                    horizontal=True,
+                    label_visibility='collapsed')
+                
             with cols[1]:
+
+                common.label_name('Type')
                 radio_reqtype = st.radio(
                     label='Type',
                     options=['Regular', 'Ad Hoc', 'TOA'],
                     width='stretch',
-                    horizontal=True)
+                    horizontal=True,
+                    label_visibility='collapsed')
+            
+            common.label_name('Hyperlinks')
             input_hyperlink = st.text_area(
                 label='Hyperlink Input',
                 key='in_hyperlink',
-                height=150,
+                height=200,
                 placeholder='Enter one or more hyperlinks (one per line)',
                 label_visibility='collapsed')
-            btn_add = st.button('➕ Add Record' , key='input_archive', width='stretch')
+
+            cols = st.columns([7, 3], gap='small')
+            with cols[0]:
+                btn_add = st.button('➕ Add Record' , key='input_archive', width='stretch')
+            with cols[1]:
+                btn_companies = st.button('⚙️ Agencies/Clients', key='check_client', width='stretch')
     
     with main_cols[1]:
         st.subheader('📊 Records Preview')
@@ -112,30 +155,35 @@ def input():
             docs = list(temp_collection.find({}, {'_id':0}))
             df = pd.DataFrame(docs)
             if df.empty:
-                st.info('No records added yet. Use the form above to add entries.')
+                st.info('No records added yet...')
+                disable_button=True
+                record_options=[]
             else:
                 df.index = df.index+1
-                st.dataframe(df, width='stretch', height=200)
-            if df.empty:
-                disable_button=True
-                record_options = []
-            else:
+                st.dataframe(df, width='stretch', height=337)
                 disable_button=False
                 record_options = list(range(1, temp_collection_count+1))
+            
             with st.container():
                 btn_submit = st.button(
                     label='✅ Submit All',
                     width='stretch',
                     disabled=disable_button,
                     help='Add records first before submitting')
-                record_no = st.selectbox(
-                    label='Select Record',
-                    options = record_options)
-                btn_delete = st.button(
-                    label='🗑️ Delete Record',
-                    width='stretch',
-                    disabled=disable_button,
-                    help='Remove selected record')
+                
+                cols = st.columns([2, 8], gap='small')
+                with cols[0]:
+                    record_no = st.selectbox(
+                        label='Select Record',
+                        options = record_options,
+                        label_visibility='collapsed')
+                
+                with cols[1]:
+                    btn_delete = st.button(
+                        label='🗑️ Delete Record',
+                        width='stretch',
+                        disabled=disable_button,
+                        help='Remove selected record')
                 btn_delete_all = st.button(
                     label='🗑️ Delete All',
                     width='stretch',
@@ -210,3 +258,6 @@ def input():
             time.sleep(2)
         st.rerun()
         st.cache_data.clear()
+
+    if btn_companies:
+        modals.agencies_clients()

@@ -74,7 +74,7 @@ def main(username, rights):
             menu_title='Online Monitoring',
             menu_icon='clock-history',
             options=options_list,
-            icons=icons_list
+            icons=icons_list,
         )
         btn_clearcache = st.button('🔄 **Reset**', width='stretch')
     
